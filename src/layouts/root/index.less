@@ -1,0 +1,36 @@
+.root-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  min-width: 768px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.content-container {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  .site-layout-content {
+    background-color: transparent;
+    margin: 16px 12px 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    .ant-breadcrumb {
+      margin-bottom: 16px;
+    }
+  }
+
+  .site-layout-footer {
+    text-align: center;
+    background-color: transparent;
+    margin: 10px 0px;
+    &:hover {
+      animation: shake-bottom 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+    }
+  }
+}

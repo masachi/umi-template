@@ -1,0 +1,55 @@
+.header-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafafa;
+  border: 1px solid #f0f0f0;
+
+  .label {
+    font-size: 16px;
+    padding: 6px 0px;
+  }
+}
+
+.toolbar-container {
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 24px;
+  padding-block: 16px;
+
+  .tools-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .tools-right {
+    justify-content: flex-end;
+  }
+}
+
+.uni-table {
+  //drag
+  .row-dragging {
+    border: 1px solid #ccc;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .row-dragging td {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px !important;
+    flex: 1;
+  }
+
+  .row-dragging .drag-visible {
+    visibility: visible;
+  }
+
+  .ant-table-cell {
+    word-break: break-all;
+  }
+}
