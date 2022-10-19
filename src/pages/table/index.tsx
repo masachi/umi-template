@@ -18,12 +18,12 @@ const expandData = [
         id: uuidv4(),
         Level: '1-expand',
         All: 0,
-        left: 0,
+        left: 20,
         childs: [
           {
             Level: '1-expand-expand',
             All: 0,
-            left: 0,
+            left: 40,
           },
         ],
       },
@@ -87,6 +87,23 @@ const TableContainer = (props: any) => {
     );
   };
 
+  const processExpandableExportDataSource = (dataSource: any[]) => {
+    let result = [];
+    dataSource.forEach((dataItem) => {
+      if (dataItem.childs) {
+        if (!expandedRowKeys.includes(dataItem.id)) {
+          delete dataItem['childs'];
+        } else {
+          processExpandableExportDataSource(dataItem.childs);
+        }
+      }
+
+      result.push(dataItem);
+    });
+
+    return result;
+  };
+
   return (
     <div className={'mock-table-container'}>
       <Card style={{ marginTop: 20 }} title={'测试用table'}>
@@ -100,6 +117,16 @@ const TableContainer = (props: any) => {
           // TODO 暂定 总计字段 由后端算 key: summaryData
           needSummary={true}
           summaryDataIndex={'Hospital'}
+          dataItemProcessor={(item, index) => {
+            return {
+              ...item,
+              Index: index + 1,
+              Hospital: `Label 1-${index + 1}`,
+            };
+          }}
+          summaryExcludeKeys={['Index']}
+          exportName={'测试用table'}
+          exportExcludeKeys={['Index']}
           dataSource={[
             {
               OutHospitalCount: 0,
@@ -222,8 +249,16 @@ const TableContainer = (props: any) => {
           rowKey={'id'}
           needExport={true}
           columns={HOSPITAL_LEVEL_DATA_ANALYSIS_COLUMNS}
+          dataItemProcessor={(item, index) => {
+            return {
+              ...item,
+              Hospital: `Label 2-${index + 1}`,
+            };
+          }}
           needSummary={true}
           summaryDataIndex={'Level'}
+          summaryExcludeKeys={['Hospital']}
+          exportName={'测试用table2'}
           dataSource={[
             {
               Level: '1',
@@ -263,6 +298,10 @@ const TableContainer = (props: any) => {
           columns={HOSPITAL_LEVEL_DATA_ANALYSIS_COLUMNS}
           needSummary={true}
           summaryDataIndex={'Level'}
+          exportName={'展开测试用table'}
+          exportTableDataSourceProcessor={(dataSource) => {
+            return processExpandableExportDataSource(dataSource);
+          }}
           expandable={{
             expandedRowClassName: (record, index, indent) => {
               return 'expanded-record';

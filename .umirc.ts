@@ -24,7 +24,8 @@ export default defineConfig({
     ]);
   },
   title: '测试用平台',
-  mfsu: {},
+  // better xlsx 不兼容 mfsu
+  // mfsu: {},
   fastRefresh: {},
   dva: { immer: true, hmr: true, skipModelValidate: true },
   // TODO locale

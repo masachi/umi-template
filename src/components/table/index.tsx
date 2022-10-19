@@ -22,6 +22,8 @@ import { FileExcelOutlined } from '@ant-design/icons';
 import isEmpty from 'lodash/isEmpty';
 import Toolbar from '@ant-design/pro-table/es/components/ToolBar';
 import { processSummaryData } from '@/components/table/processor/data/summary-data';
+import { exportExcel } from '@/utils/excel-export';
+import cloneDeep from 'lodash/cloneDeep';
 
 const defaultOptions = {
   density: false,
@@ -48,9 +50,9 @@ interface UniTableProps<T, U = ParamsType> extends ProTableProps<T, U> {
   columnsFetch?: () => Promise<any[]>;
   dataFetch?: () => Promise<any[]>;
   // dataProcessor
-  dataItemProcessor?: (dataItem: any) => any;
+  dataItemProcessor?: (dataItem: any, index: number) => any;
   // columnProcessor
-  columnItemProcessor?: (columnItem: any) => any;
+  columnItemProcessor?: (columnItem: any, index: number) => any;
   // 样式
   className?: string;
   style?: CSSProperties;
@@ -65,6 +67,10 @@ interface UniTableProps<T, U = ParamsType> extends ProTableProps<T, U> {
   summaryDataIndex?: string;
   summaryExcludeKeys?: string[];
   summaryData?: any;
+  // 导出
+  exportName?: string;
+  exportExcludeKeys?: string[];
+  exportTableDataSourceProcessor?: (dataSource: any[]) => any[];
 }
 
 const UniTable = ({
@@ -86,6 +92,8 @@ const UniTable = ({
   summaryDataIndex,
   summaryExcludeKeys,
   summaryData,
+  exportName,
+  exportExcludeKeys,
   ...restProps
 }: UniTableProps<any>) => {
   const [tableColumns, setTableColumns] = useState([]);
@@ -197,7 +205,7 @@ const UniTable = ({
     setSearchFilter(processSearchFilter(tableColumns));
 
     // TODO 处理columns
-    tableColumns = tableColumns.slice().map((item) => {
+    tableColumns = tableColumns.slice().map((item, index) => {
       processors.forEach((processor) => {
         item = Object.assign(
           {},
@@ -235,7 +243,7 @@ const UniTable = ({
       });
 
       if (columnItemProcessor) {
-        item = Object.assign({}, columnItemProcessor(item));
+        item = Object.assign({}, columnItemProcessor(item, index));
       }
 
       return item;
@@ -251,9 +259,9 @@ const UniTable = ({
     }
 
     // TODO 处理 dataSource
-    tableDataSource = tableDataSource.slice().map((item) => {
+    tableDataSource = tableDataSource.slice().map((item, index) => {
       if (dataItemProcessor) {
-        item = Object.assign({}, dataItemProcessor(item));
+        item = Object.assign({}, dataItemProcessor(item, index));
       }
       return commonDataSourceProcessor(item);
     });
@@ -328,8 +336,16 @@ const UniTable = ({
         columnItem.valueType !== 'option',
     );
     if (!isEmpty(canExportColumns)) {
-      // TODO export with excel
-      // exportExcel(canExportColumns as any[], tableDataSource, exportName);
+      exportExcel(
+        canExportColumns.slice() as any[],
+        restProps.exportTableDataSourceProcessor
+          ? restProps.exportTableDataSourceProcessor(
+              cloneDeep(tableDataSource.slice()),
+            )
+          : cloneDeep(tableDataSource.slice()),
+        exportName,
+        exportExcludeKeys,
+      );
     }
   };
 

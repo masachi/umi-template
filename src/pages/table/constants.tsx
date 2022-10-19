@@ -10,9 +10,6 @@ export const LEVEL_THREE_HOSPITAL_DATA_ANALYSIS_COLUMNS = [
         dataIndex: 'Index',
         title: '序号',
         visible: true,
-        render: (node, record, index) => {
-          return <span>{index + 1}</span>;
-        },
       },
     ],
   },
@@ -20,9 +17,6 @@ export const LEVEL_THREE_HOSPITAL_DATA_ANALYSIS_COLUMNS = [
     dataIndex: 'Hospital',
     title: '1',
     visible: true,
-    render: (node, record, index) => {
-      return <span>{record.Hospital ? node : `Label 1-${index + 1}`}</span>;
-    },
   },
   {
     dataIndex: 'Works',
@@ -186,6 +180,9 @@ export const HOSPITAL_LEVEL_DATA_ANALYSIS_COLUMNS = [
     dataIndex: 'Level',
     title: '1',
     visible: true,
+    // 这里有个配置项 indent 缩进 ： true
+    indent: true,
+    width: 300,
     render: (node, record, index) => {
       return (
         <span
@@ -203,12 +200,9 @@ export const HOSPITAL_LEVEL_DATA_ANALYSIS_COLUMNS = [
     title: '2',
     visible: true,
     width: 200,
-    render: (node, record, index) => {
-      return <span>Label 2-{index + 1}</span>;
-    },
   },
   {
-    dataIndex: '',
+    dataIndex: 'Hospitals',
     title: '',
     visible: true,
     children: [
@@ -216,26 +210,31 @@ export const HOSPITAL_LEVEL_DATA_ANALYSIS_COLUMNS = [
         dataIndex: 'All',
         title: '3-1',
         visible: true,
+        width: 100,
       },
       {
         dataIndex: 'Chinese',
         title: '3-2',
         visible: true,
+        width: 100,
       },
       {
         dataIndex: 'ChineseWestern',
         title: '3-3',
         visible: true,
+        width: 100,
       },
       {
         dataIndex: 'Ethnic',
         title: '3-4',
         visible: true,
+        width: 100,
       },
       {
         dataIndex: 'Special',
         title: '3-5',
         visible: true,
+        width: 100,
       },
     ],
   },
