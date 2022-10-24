@@ -1,12 +1,6 @@
 {
   "name": "@masachi/layouts",
-  "version": "0.0.1",
-  "license": "MIT",
-  "scripts": {
-    "build": "rollup -c rollup.config.ts"
-  },
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "version": "0.0.2",
   "keywords": [
     "react",
     "frontend"
@@ -16,12 +10,15 @@
     "url": "https://github.com/masachi/umi-template.git",
     "directory": "packages/layouts"
   },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "scripts": {
+    "build": "rollup -c rollup.config.ts"
+  },
   "dependencies": {
     "react": "17.x",
     "react-dom": "17.x"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
   },
   "packageManager": "npm@7.3.0",
   "engines": {
@@ -29,5 +26,8 @@
   },
   "publishConfig": {
     "registry": "https://packages.aliyun.com/61b98146fa282c88e1039eba/npm/npm-registry/"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
   }
 }
