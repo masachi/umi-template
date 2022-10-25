@@ -1,0 +1,83 @@
+.font-white {
+  color: white;
+}
+
+.menu-container {
+  overflow: hidden;
+  height: 100vh;
+  transition: all 0.2s;
+  background-color: #353a54 !important; // 菜单栏底色
+
+  .sider-logo {
+    height: 3.5rem;
+    background-color: transparent;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    color: #fff;
+    font-size: 18px;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-bottom: 5px;
+    padding: 10px;
+    img {
+      height: 100%;
+    }
+  }
+  .side-menu {
+    border-right: 0;
+    padding: 0 10px;
+    background-color: transparent;
+    overflow-x: hidden;
+    font-size: 14px;
+    color: white;
+    max-height: calc(100vh - 48px - 3.5rem - 5px);
+    i {
+      color: white;
+      right: 5px;
+    }
+    .ant-menu-item a {
+      color: white;
+      &:hover {
+        color: #7495f7;
+      }
+    }
+    .ant-menu-item-selected {
+      background-color: #7495f7;
+      border-radius: 7px;
+      color: #fff;
+      &:hover {
+        color: #fff;
+      }
+      a {
+        color: #fff;
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
+    .ant-menu-item-icon {
+      font-size: 18px;
+    }
+    .ant-menu-title-content {
+      margin-left: 6px;
+      font-size: 14px;
+      color: #fff;
+      &:hover {
+        color: #7495f7;
+      }
+    }
+    .ant-menu-sub {
+      background-color: transparent;
+    }
+  }
+  .ant-layout-sider-trigger {
+    border-top: 2px solid #e6e6e6;
+  }
+
+  .ant-layout-sider-trigger {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+  }
+}

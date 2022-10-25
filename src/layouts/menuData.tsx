@@ -1,11 +1,5 @@
 import React from 'react';
-
-export interface MenuData {
-  route: string;
-  name: string;
-  icon?: any;
-  children?: MenuData[];
-}
+import { MenuData } from '../../packages/menu-sider/src/MenuSider';
 
 export const menuData: MenuData[] = [
   {
