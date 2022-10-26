@@ -1,6 +1,7 @@
 import { defineConfig } from 'umi';
 import AntdDayjsWebpackPlugin from 'antd-dayjs-webpack-plugin';
 import dayjs from 'dayjs';
+import { headers } from '@/headers';
 const HappyPack = require('happypack');
 const happyThreadPool = HappyPack.ThreadPool({
   size: require('os').cpus().length,
@@ -94,28 +95,7 @@ export default defineConfig({
           path: '/table',
           component: '@/pages/table/index',
           wrappers: ['@/layouts/base-layout'],
-          headers: [
-            {
-              componentName: 'Select',
-              props: {
-                dataKey: 'simulate-select',
-              },
-            },
-            {
-              componentName: 'DatePicker',
-              props: {
-                dataKey: 'simulate-datepicker',
-                dataType: 'month',
-              },
-            },
-            {
-              componentName: 'RangePicker',
-              props: {
-                dataKey: 'simulate-rangepicker',
-                dataType: 'quarter',
-              },
-            },
-          ],
+          headerKey: 'default',
         },
       ],
     },
