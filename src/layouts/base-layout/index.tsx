@@ -144,7 +144,7 @@ const BaseLayout = (props: any) => {
       {route?.headerKey && headers[route?.headerKey]?.length > 0 && (
         <BaseLayoutHeader
           items={headers[route?.headerKey]}
-          value={childrenSearchValues}
+          value={childrenSearchValues || {}}
         />
       )}
       {React.Children.map(props.children, (child, i) => {

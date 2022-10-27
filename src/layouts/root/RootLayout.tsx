@@ -7,12 +7,30 @@ import MenuSider from '@/components/menu-sider/MenuSider';
 import { Content, Footer } from 'antd/es/layout/layout';
 import SiteHeader from '@/components/header/header';
 import { ErrorBoundary } from 'react-error-boundary';
+import { Link, useLocation } from 'umi';
+import { getBreadcrumbFromMenuData } from '@/layouts/menuData';
 
 class RootLayout extends Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {};
   }
+
+  renderBreadcrumb = () => {
+    return getBreadcrumbFromMenuData(this.props.location.pathname).map(
+      (crumbItem, index) => {
+        return (
+          <Breadcrumb.Item key={crumbItem?.url}>
+            {crumbItem?.url ? (
+              <Link to={crumbItem?.url}>{crumbItem?.name}</Link>
+            ) : (
+              <span>{crumbItem?.name}</span>
+            )}
+          </Breadcrumb.Item>
+        );
+      },
+    );
+  };
 
   renderErrorFallback = ({ error, resetErrorBoundary }) => {
     return (
@@ -34,9 +52,9 @@ class RootLayout extends Component<any, any> {
               <Layout className={'content-container'}>
                 <SiteHeader />
                 <Content className="site-layout-content">
-                  {/*{this.props.location.pathname !== '/index' && (*/}
-                  {/*    <Breadcrumb>{this.renderBreadcrumb()}</Breadcrumb>*/}
-                  {/*)}*/}
+                  {this.props.location.pathname !== '/index' && (
+                    <Breadcrumb>{this.renderBreadcrumb()}</Breadcrumb>
+                  )}
 
                   {this.props.children}
                 </Content>
