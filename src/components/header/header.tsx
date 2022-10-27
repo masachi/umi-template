@@ -117,6 +117,7 @@ const SiteHeader = (props: SiteHeaderProps) => {
       </Menu.Item>
     </Menu>
   );
+
   const globalNotificationClk = () => {
     notification.open({
       key: 'global',

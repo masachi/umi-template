@@ -1,11 +1,5 @@
 import React from 'react';
-
-export interface MenuData {
-  route: string;
-  name: string;
-  icon?: any;
-  children?: MenuData[];
-}
+import { MenuData } from '../../packages/menu-sider/src/MenuSider';
 
 /**
  * 此处请严格遵守内层的route路由path 从外层路由pathname扩展

@@ -1,0 +1,36 @@
+{
+  "name": "@masachi/sider",
+  "version": "0.0.1",
+  "keywords": [
+    "react",
+    "frontend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/masachi/umi-template.git",
+    "directory": "packages/menu-sider"
+  },
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "scripts": {
+    "build": "rollup -c rollup.config.ts"
+  },
+  "dependencies": {
+    "@ant-design/icons": "4.7.0",
+    "antd": "4.23.4",
+    "react": "17.x",
+    "react-dom": "17.x",
+    "umi": "3.5.34"
+  },
+  "packageManager": "npm@7.3.0",
+  "engines": {
+    "node": ">=14"
+  },
+  "publishConfig": {
+    "registry": "https://packages.aliyun.com/61b98146fa282c88e1039eba/npm/npm-registry/"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  }
+}
