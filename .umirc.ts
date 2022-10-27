@@ -92,7 +92,7 @@ export default defineConfig({
       routes: [
         {
           exact: true,
-          path: '/table',
+          path: '/table/2/3',
           component: '@/pages/table/index',
           wrappers: ['@/layouts/base-layout'],
           headerKey: 'default',
