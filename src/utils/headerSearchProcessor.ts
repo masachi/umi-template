@@ -1,6 +1,10 @@
 import dayjs from 'dayjs';
 
-export const processSearchData = (value: any, componentName: string) => {
+export const processSearchData = (componentName: string, value?: any) => {
+  if (!value) {
+    return value;
+  }
+
   switch (componentName) {
     case 'Select':
       return value;

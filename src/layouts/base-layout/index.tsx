@@ -7,16 +7,20 @@ import { dynamicComponentsMap } from '@/components';
 import { processSearchData } from '@/utils/headerSearchProcessor';
 import isNil from 'lodash/isNil';
 import omitBy from 'lodash/omitBy';
+import { headers } from '@/headers';
+import { useSessionStorageState } from 'ahooks';
 
 interface BaseLayoutProps {}
 
 export interface BaseLayoutHeaderItem {
+  label?: string;
   componentName: string;
-  props: any;
+  props?: any;
 }
 
 interface BaseLayoutHeaderProps {
   items: BaseLayoutHeaderItem[];
+  value: any;
 }
 
 const mockDatasource = {
@@ -37,7 +41,7 @@ const mockDatasource = {
 };
 
 const BaseLayoutHeader = (props: BaseLayoutHeaderProps) => {
-  const [headerSearchValue, setHeaderSearchValue] = useState({});
+  const [headerSearchValue, setHeaderSearchValue] = useState(props.value);
 
   const onHeaderItemChange = (value: any, dataKey: string) => {
     let currentHeaderSearchValue = Object.assign({}, headerSearchValue);
@@ -54,14 +58,26 @@ const BaseLayoutHeader = (props: BaseLayoutHeaderProps) => {
             const DynamicComponent = dynamicComponentsMap[
               `Uni${headerItem?.componentName}`
             ] as React.FC;
+            let value =
+              headerSearchValue[
+                headerItem?.props?.valueKey || headerItem?.props?.dataKey
+              ];
+            if (value && headerItem?.props?.preProcess) {
+              value = headerItem?.props?.preProcess(value);
+            }
             return (
-              <Col key={uuidv4()} span={6}>
+              <Col className={'header-item-container'} key={uuidv4()} span={6}>
+                {headerItem?.label && <label>{headerItem?.label}：</label>}
                 <DynamicComponent
+                  className={`header-item-base ${headerItem?.props?.className}`}
                   {...headerItem?.props}
                   dataSource={mockDatasource[headerItem?.props?.dataKey] || []}
-                  value={headerSearchValue[headerItem?.props?.dataKey]}
+                  value={value}
                   onChange={(value) => {
-                    onHeaderItemChange(value, headerItem?.props?.dataKey);
+                    onHeaderItemChange(
+                      value,
+                      headerItem?.props?.valueKey || headerItem?.props?.dataKey,
+                    );
                   }}
                 />
               </Col>
@@ -71,8 +87,8 @@ const BaseLayoutHeader = (props: BaseLayoutHeaderProps) => {
             span={6}
             style={{
               display: 'flex',
-              alignItems: 'end',
-              justifyContent: 'end',
+              alignItems: 'start',
+              justifyContent: 'start',
             }}
           >
             <Button
@@ -97,15 +113,16 @@ const BaseLayoutHeader = (props: BaseLayoutHeaderProps) => {
 const BaseLayout = (props: any) => {
   const route = props.route;
 
-  const [childrenSearchValues, setChildrenSearchValues] = useState({});
+  const [childrenSearchValues, setChildrenSearchValues] =
+    useSessionStorageState<any>('tableLayoutOpts', {});
 
   const searchDataProcess = (data) => {
     // 处理一下date format
     // 这里其实可以拿到headers的
-    route.headers?.forEach((item) => {
+    headers[route?.headerKey]?.forEach((item) => {
       data[item.props?.dataKey] = processSearchData(
-        data[item.props?.dataKey],
         item.componentName,
+        data[item.props?.dataKey],
       );
     });
 
@@ -124,8 +141,11 @@ const BaseLayout = (props: any) => {
 
   return (
     <Layout>
-      {route?.headers && route?.headers.length > 0 && (
-        <BaseLayoutHeader items={route?.headers} />
+      {route?.headerKey && headers[route?.headerKey]?.length > 0 && (
+        <BaseLayoutHeader
+          items={headers[route?.headerKey]}
+          value={childrenSearchValues || {}}
+        />
       )}
       {React.Children.map(props.children, (child, i) => {
         if (child) {

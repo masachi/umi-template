@@ -5,5 +5,7 @@ export default function (initialState: any): any {
   return {
     '/': true,
     '/table': true,
+    '/table/2': true,
+    '/table/2/3': true,
   };
 }
