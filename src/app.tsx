@@ -1,6 +1,5 @@
 import { message } from 'antd';
 import { history } from 'umi';
-import { decryptResponseBody, encryptRequestBody } from '@/utils/encryption';
 
 export async function getInitialState() {
   return {};
@@ -49,8 +48,8 @@ export const request: any = {
     async (url, options: any) => {
       const { headers, responseType, method } = options;
       let addHeaders: any = {
-        res_encrypt: true,
-        req_encrypt: true,
+        res_encrypt: false,
+        req_encrypt: false,
       };
       let cacheOption = {
         useCache: true, // 启用缓存
@@ -65,12 +64,6 @@ export const request: any = {
       if (token) {
         // addHeaders['Authorization'] = `Bearer ${token}`;
         addHeaders['token'] = `${token}`;
-      }
-
-      if (addHeaders['req_encrypt']) {
-        options.data.body = encryptRequestBody(
-          JSON.stringify(options.data.body || {}),
-        );
       }
 
       return {
@@ -95,9 +88,6 @@ export const request: any = {
         return responseBody;
       }
 
-      if (responseBody?.encrypted) {
-        responseBody.data = decryptResponseBody(responseBody.data);
-      }
       return responseBody;
     },
   ],
