@@ -87,6 +87,11 @@ export default defineConfig({
   },
   routes: [
     {
+      exact: true,
+      path: '/login',
+      component: '@/pages/login/login',
+    },
+    {
       path: '/',
       component: '@/layouts/index',
       routes: [
