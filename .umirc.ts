@@ -23,6 +23,15 @@ export default defineConfig({
         threadPool: happyThreadPool,
       },
     ]);
+    config.plugin('compression-webpack-plugin').use(CompressionPlugin, [
+      {
+        test: /\.js$|\.html$|\.css$/,
+        exclude: /\/public\/*/,
+        threshold: 10240,
+        algorithm: 'gzip',
+        deleteOriginalAssets: false,
+      },
+    ]);
   },
   title: '测试用平台',
   // better xlsx 不兼容 mfsu
