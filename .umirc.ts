@@ -2,6 +2,7 @@ import { defineConfig } from 'umi';
 import AntdDayjsWebpackPlugin from 'antd-dayjs-webpack-plugin';
 import dayjs from 'dayjs';
 import { headers } from '@/headers';
+import CompressionPlugin from 'compression-webpack-plugin';
 const HappyPack = require('happypack');
 const happyThreadPool = HappyPack.ThreadPool({
   size: require('os').cpus().length,
