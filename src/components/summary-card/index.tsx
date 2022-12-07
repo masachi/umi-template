@@ -1,17 +1,22 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import './index.less';
 import { Col, Row, Tooltip } from 'antd';
-import { v4 as uuidv4 } from 'uuid';
 import { valueNullOrUndefinedReturnDash } from '@/utils/utils';
+import { Emitter, EventConstant } from '@/utils/emitter';
+import isEqual from 'lodash/isEqual';
 
 export declare type ItemDataType = 'summary' | 'info';
 
 interface AnalysisSummaryCardProps {
   data?: DataItem[];
+  containerClassName?: string;
+  defaultSelectedDataTypes?: string[];
+  eventName?: string;
 }
 
 export interface DataItem {
   id?: string;
+  clickable?: boolean;
   type: ItemDataType;
   dataKeys: string[];
 
@@ -20,13 +25,17 @@ export interface DataItem {
   // type === summary
   label?: string;
   icon?: any;
+  summaryData?: SummaryDataItem[];
+
+  // type === info
+  infos?: InfoItem[];
+}
+
+export interface SummaryDataItem {
   value?: string;
   dataType?: string;
   dataScale?: number;
   valueLabel?: string;
-
-  // type === info
-  infos?: InfoItem[];
 }
 
 interface InfoItem {
@@ -37,6 +46,8 @@ interface InfoItem {
   valueLabel?: string;
   style?: object;
 
+  clickable?: boolean;
+
   ratioItems?: CardRatioItem[];
 }
 
@@ -45,15 +56,64 @@ interface CardRatioItem {
   ratio: number;
 }
 
-const SummaryCard = ({ data }: AnalysisSummaryCardProps) => {
+const SummaryCard = ({
+  data,
+  containerClassName,
+  defaultSelectedDataTypes,
+  eventName,
+}: AnalysisSummaryCardProps) => {
+  // TODO clickedDataTypes 渲染会不会出现多页面 都接到这个types 导致 重复渲染
+  const [clickedDataTypes, setClickedDataTypes] = useState(
+    defaultSelectedDataTypes || [],
+  );
+
+  useEffect(() => {
+    Emitter.on(EventConstant.SUMMARY_CARD_CLICK, (clickedDataTypes) => {
+      setClickedDataTypes(clickedDataTypes);
+      Emitter.emit(
+        eventName || EventConstant.SUMMARY_CARD_CLICK_PARENT,
+        clickedDataTypes,
+      );
+    });
+    return () => {
+      Emitter.off(EventConstant.SUMMARY_CARD_CLICK);
+    };
+  }, []);
+
   return (
-    <div className={'card-container'}>
+    <div
+      className={`card-container ${containerClassName} ${
+        data?.length === 1 && isEqual(data?.at(0)?.dataKeys, clickedDataTypes)
+          ? 'card-selected'
+          : ''
+      }`}
+    >
       {data?.map((dataItem, index) => {
+        let clickDataTypes =
+          dataItem.dataKeys || dataItem?.infos?.map((item) => item.dataType);
+
         return (
           <>
-            <div key={dataItem?.id} style={{ height: 92 }}>
-              {dataItem.type === 'summary' && <SummaryItem {...dataItem} />}
-              {dataItem.type === 'info' && <SummaryInfoItem {...dataItem} />}
+            <div
+              key={dataItem?.id}
+              className={`card-base-container ${
+                data?.length > 1 && isEqual(clickDataTypes, clickedDataTypes)
+                  ? 'card-selected'
+                  : ''
+              }`}
+            >
+              {dataItem.type === 'summary' && (
+                <SummaryItem
+                  data={dataItem}
+                  clickedDataTypes={clickedDataTypes}
+                />
+              )}
+              {dataItem.type === 'info' && (
+                <SummaryInfoItem
+                  data={dataItem}
+                  clickedDataTypes={clickedDataTypes}
+                />
+              )}
             </div>
             {index != data?.length - 1 && <div className={'separator'} />}
           </>
@@ -63,24 +123,49 @@ const SummaryCard = ({ data }: AnalysisSummaryCardProps) => {
   );
 };
 
-const SummaryItem = (data: DataItem) => {
+const SummaryItem = ({ data, clickedDataTypes }) => {
+  let clickDataTypes = data.dataKeys;
+
   return (
     <>
-      <div id={data?.id} className={'summary-item-container'}>
+      <div
+        id={data?.id}
+        className={'summary-item-container'}
+        style={data.clickable ? { cursor: 'pointer' } : { cursor: 'default' }}
+        onClick={() => {
+          if (data.clickable) {
+            Emitter.emit(
+              EventConstant.SUMMARY_CARD_CLICK,
+              isEqual(clickDataTypes, clickedDataTypes) ? [] : clickDataTypes,
+            );
+          }
+        }}
+      >
         <div className={'label-container'}>
           {data.icon}
           <span>{data.label}</span>
         </div>
 
-        <div className={'value-container'}>
-          <span className={'value'}>
-            {valueNullOrUndefinedReturnDash(
-              data?.value,
-              data?.dataType,
-              data?.dataScale,
-            )}
-          </span>
-          {data.value ? <span>{data?.valueLabel}</span> : null}
+        <div className={'values-container'}>
+          {
+            // 先行写死 说用括号来
+            data?.summaryData?.map((item, index) => {
+              return (
+                <div className={'value-container'}>
+                  <span className={'value'}>
+                    {index !== 0 && '('}
+                    {valueNullOrUndefinedReturnDash(
+                      item?.value,
+                      item?.dataType,
+                      item?.dataScale,
+                    )}
+                    {index !== 0 && ')'}
+                  </span>
+                  {item.value ? <span>{item?.valueLabel}</span> : null}
+                </div>
+              );
+            })
+          }
         </div>
         {data?.ratioItems && (
           <Row gutter={[16, 16]}>
@@ -118,14 +203,37 @@ const SummaryItem = (data: DataItem) => {
   );
 };
 
-const SummaryInfoItem = (data: DataItem) => {
+const SummaryInfoItem = ({ data, clickedDataTypes }) => {
   return (
     <>
       <div id={data?.id} className={'info-container'}>
-        {data?.infos?.map((infoItem) => {
+        {data?.infos?.map((infoItem, index) => {
+          let clickDataTypes = [data.dataKeys[index]];
+
           return (
             <>
-              <div className={'info-item-container'}>
+              <div
+                className={`info-item-container ${
+                  isEqual(clickDataTypes, clickedDataTypes)
+                    ? 'card-selected'
+                    : ''
+                }`}
+                style={
+                  infoItem.clickable
+                    ? { cursor: 'pointer' }
+                    : { cursor: 'default' }
+                }
+                onClick={() => {
+                  if (infoItem.clickable) {
+                    Emitter.emit(
+                      EventConstant.SUMMARY_CARD_CLICK,
+                      isEqual(clickDataTypes, clickedDataTypes)
+                        ? []
+                        : clickDataTypes,
+                    );
+                  }
+                }}
+              >
                 <span className={'label'}>{infoItem.label}</span>
                 <span className={'value ellipsis'} style={infoItem?.style}>
                   {valueNullOrUndefinedReturnDash(

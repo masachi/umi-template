@@ -45,7 +45,8 @@
     "react-sortable-hoc": "2.0.0",
     "umi": "3.5.34",
     "uuid": "^9.0.0",
-    "pinyin": "3.0.0-alpha.4"
+    "pinyin": "3.0.0-alpha.4",
+    "jwt-decode": "^3.1.2"
   },
   "devDependencies": {
     "@types/react": "18.x",
