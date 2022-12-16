@@ -1,5 +1,5 @@
 import Sider from 'antd/es/layout/Sider';
-import React, { Component, useLayoutEffect, useState } from 'react';
+import React, { Component, useEffect, useLayoutEffect, useState } from 'react';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import './index.less';
 import { Menu } from 'antd';
@@ -7,8 +7,11 @@ import { MenuData, menuData } from '@/layouts/menuData';
 import { useAccess, Link } from 'umi';
 
 const { SubMenu } = Menu;
+const qs = require('qs');
 
-interface MenuSiderProps {}
+interface MenuSiderProps {
+  bizRoutes?: any[];
+}
 
 const MenuSider = (props: MenuSiderProps) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -19,6 +22,23 @@ const MenuSider = (props: MenuSiderProps) => {
     let openedKeys: string[] = [];
 
     return openedKeys;
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', onWindowResize);
+    return () => window.removeEventListener('resize', onWindowResize);
+  }, []);
+
+  const onWindowResize = () => {
+    setCollapsed(window?.innerWidth < 1280);
+  };
+
+  const buildRouteWithQuery = (route: string, query?: object) => {
+    if (query) {
+      return `${route}?${qs.stringify(query)}`;
+    }
+
+    return route;
   };
 
   const renderMenu = (menuData: MenuData[]) => {
@@ -36,12 +56,21 @@ const MenuSider = (props: MenuSiderProps) => {
       } else {
         return access[menuItem.route] ? (
           <Menu.Item key={menuItem.route} icon={menuItem.icon && menuItem.icon}>
-            <Link to={menuItem.route}>{menuItem.name}</Link>
+            <Link to={buildRouteWithQuery(menuItem.route, menuItem.query)}>
+              {menuItem.name}
+            </Link>
           </Menu.Item>
         ) : (
           <></>
         );
       }
+    });
+  };
+
+  const menuDataWithRouterProcessor = (menuData: MenuData[]) => {
+    let currentBizRoutePaths = props.bizRoutes?.map((item) => item.path);
+    return menuData?.slice()?.filter((item) => {
+      return currentBizRoutePaths.includes(item.route);
     });
   };
 
@@ -85,7 +114,7 @@ const MenuSider = (props: MenuSiderProps) => {
         onSelect={({ item, key, keyPath, selectedKeys, domEvent }) => {}}
         // selectedKeys={[]}
       >
-        {renderMenu(menuData)}
+        {renderMenu(menuDataWithRouterProcessor(menuData))}
       </Menu>
     </Sider>
   );

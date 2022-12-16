@@ -2,6 +2,7 @@ import React from 'react';
 
 export interface MenuData {
   route: string;
+  query?: object;
   name: string;
   icon?: any;
   children?: MenuData[];

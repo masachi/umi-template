@@ -32,6 +32,11 @@
     font-size: 14px;
     color: white;
     max-height: calc(100vh - 48px - 3.5rem - 5px);
+
+    // hide scroll bar
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+
     i {
       color: white;
       right: 5px;
@@ -76,6 +81,11 @@
       background-color: transparent;
     }
   }
+
+  .side-menu::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+
   .ant-layout-sider-trigger {
     border-top: 2px solid #e6e6e6;
   }

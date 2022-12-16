@@ -1,7 +1,6 @@
 import { message } from 'antd';
 import { history } from 'umi';
 import jwt_decode from 'jwt-decode';
-import { RespVO } from '@/interfaces';
 import { ParameterValidateError } from '@/exception/error';
 import { parameterValidator } from '@/validation';
 
@@ -9,7 +8,9 @@ message.config({
   maxCount: 1,
 });
 
-const UrlValidationPatternItems = {};
+const UrlValidationPatternItems = {
+  '/login': ['Sdate', 'Edate'],
+};
 
 export async function getInitialState() {
   let accessToken = localStorage.getItem('token');
@@ -29,32 +30,11 @@ export async function getInitialState() {
 }
 
 const getUserProfile = async () => {
-  let response: RespVO<any> = await getUserInfo();
-
-  if (response?.code === 0) {
-    if (response?.statusCode === 200) {
-      return response?.data;
-    }
-  }
-
   return {};
 };
 
 export function onRouteChange({ location, routes, action }) {
   // TODO  埋点
-}
-
-export function patchRoutes({ routes }) {
-  console.error('routes', routes);
-
-  // TODO 根据后端的userInfo数据来做路由 权限
-  // let bizRoutes = routes[2];
-  //
-  // let deleteRouteIndex = bizRoutes?.routes?.findIndex((item) => item.path === '/medical/quality')
-  //
-  // bizRoutes?.routes?.splice(deleteRouteIndex, 1);
-  //
-  // console.error("modified routes", routes);
 }
 
 export const dva = {
@@ -85,10 +65,7 @@ export const request: any = {
     // param validation error
     if (error?.name === 'ParameterValidateError') {
       message.error(error?.message);
-      return {
-        code: 1,
-        statusCode: 417, // 表示可预计到的错误
-      };
+      return;
     }
 
     if (error.data?.error_description === 'invalid_username_or_password') {
