@@ -14,8 +14,11 @@ const DraggableTableContainer = (props: any) => {
   const COL_NUM = 24;
 
   useEffect(() => {
-    let layouts = generateLayout();
+    let layouts = localStorage.getItem('layout')
+      ? JSON.parse(localStorage.getItem('layout'))
+      : generateLayout();
     setLayout(layouts);
+    localStorage.setItem('layout', JSON.stringify(layouts));
   }, []);
 
   const defaultProps = {
@@ -97,6 +100,8 @@ const DraggableTableContainer = (props: any) => {
 
   const onLayoutChange = (layout, layouts) => {
     console.error('onLayoutChange', layout, layouts);
+
+    localStorage.setItem('layout', JSON.stringify(layout));
   };
 
   return (
