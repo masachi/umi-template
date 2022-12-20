@@ -7,5 +7,8 @@ export default function (initialState: any): any {
     '/table': true,
     '/table/2': true,
     '/table/2/3': true,
+    '/draggable-table': true,
+    '/coordinate-table': true,
+    '/coordinate-draggable-table': false,
   };
 }

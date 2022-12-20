@@ -102,15 +102,43 @@ export default defineConfig({
       component: '@/pages/login/login',
     },
     {
+      path: '/error',
+      component: '@/pages/404.tsx',
+    },
+    {
       path: '/',
       component: '@/layouts/index',
       routes: [
+        {
+          exact: true,
+          path: '/',
+          redirect: '/table/2/3',
+        },
         {
           exact: true,
           path: '/table/2/3',
           component: '@/pages/table/index',
           wrappers: ['@/layouts/base-layout'],
           headerKey: 'default',
+        },
+        {
+          exact: true,
+          path: '/draggable-table',
+          component: '@/pages/draggable-table/index',
+          wrappers: ['@/layouts/base-layout'],
+        },
+        {
+          exact: true,
+          path: '/coordinate-table',
+          component: '@/pages/coordinate-table/index',
+          wrappers: ['@/layouts/base-layout'],
+        },
+
+        {
+          exact: true,
+          path: '/coordinate-draggable-table',
+          component: '@/pages/coordinate-draggable-table/index',
+          wrappers: ['@/layouts/base-layout'],
         },
       ],
     },

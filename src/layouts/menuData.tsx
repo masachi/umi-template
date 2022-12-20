@@ -29,6 +29,18 @@ export const menuData: MenuData[] = [
       },
     ],
   },
+  {
+    route: '/draggable-table',
+    name: '测试用拖动table',
+  },
+  {
+    route: '/coordinate-table',
+    name: '测试用坐标table',
+  },
+  {
+    route: '/coordinate-draggable-table',
+    name: '测试用坐标拖动table',
+  },
 ];
 
 export const getBreadcrumbFromMenuData = (path: string) => {

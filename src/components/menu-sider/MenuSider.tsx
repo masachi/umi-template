@@ -9,9 +9,7 @@ import { useAccess, Link } from 'umi';
 const { SubMenu } = Menu;
 const qs = require('qs');
 
-interface MenuSiderProps {
-  bizRoutes?: any[];
-}
+interface MenuSiderProps {}
 
 const MenuSider = (props: MenuSiderProps) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -67,13 +65,6 @@ const MenuSider = (props: MenuSiderProps) => {
     });
   };
 
-  const menuDataWithRouterProcessor = (menuData: MenuData[]) => {
-    let currentBizRoutePaths = props.bizRoutes?.map((item) => item.path);
-    return menuData?.slice()?.filter((item) => {
-      return currentBizRoutePaths.includes(item.route);
-    });
-  };
-
   return (
     <Sider
       className={'menu-container'}
@@ -114,7 +105,7 @@ const MenuSider = (props: MenuSiderProps) => {
         onSelect={({ item, key, keyPath, selectedKeys, domEvent }) => {}}
         // selectedKeys={[]}
       >
-        {renderMenu(menuDataWithRouterProcessor(menuData))}
+        {renderMenu(menuData)}
       </Menu>
     </Sider>
   );
