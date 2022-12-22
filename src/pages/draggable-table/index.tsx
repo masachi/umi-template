@@ -9,6 +9,17 @@ import { mockData } from '@/pages/draggable-table/mock';
 
 const ROW_HEIGHT = 40;
 
+const separators = [
+  {
+    x: 0,
+    y: 1,
+    h: 0.1,
+    w: 24,
+    i: 'separator',
+    static: true,
+  },
+];
+
 const DraggableTableContainer = (props: any) => {
   const [layout, setLayout] = useState([]);
 
@@ -100,20 +111,6 @@ const DraggableTableContainer = (props: any) => {
       });
     });
 
-    layouts.push({
-      x: 0,
-      y: 1,
-      h: 0.1,
-      w: 24,
-      i: 'separator',
-      minW: 24,
-      maxW: 10,
-      maxH: 0.1,
-      minH: 0.1,
-      isResizable: false,
-      static: true,
-    });
-
     return layouts;
   };
 
@@ -126,6 +123,18 @@ const DraggableTableContainer = (props: any) => {
       id={'draggable-table-container'}
       className={'draggable-table-container'}
     >
+      {separators.map((item) => {
+        return (
+          <div
+            className={'separator-container'}
+            style={{
+              transform: `translate(10px, ${item.y * ROW_HEIGHT + 30}px)`,
+            }}
+          >
+            <div className={'separator'} />
+          </div>
+        );
+      })}
       <GridLayout
         className="layout"
         // layouts={layout}
