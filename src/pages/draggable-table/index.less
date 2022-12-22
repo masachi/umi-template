@@ -1,24 +1,63 @@
 .draggable-table-container {
   height: 100%;
   overflow-y: auto;
+  background: #ffffff;
 
   .react-grid-layout {
-    background: #ffffff;
-    margin-top: 10px;
     overflow-y: auto;
-    width: 100%;
+    width: calc(100% - 20px);
+    margin: 10px 10px;
+    border: 1px solid #000000;
   }
 
   .react-grid-item:not(.react-grid-placeholder) {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #ccc;
-    border: 1px solid black;
+  }
+
+  .react-grid-item.react-grid-placeholder {
+    background: rgba(0, 0, 0, 0.6);
   }
 
   .transparent-item-container {
     background-color: transparent;
     border: 1px solid transparent;
+  }
+
+  .grid-item-container {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+
+    .prefix {
+      white-space: nowrap;
+      //margin-right: 5px;
+    }
+
+    .input {
+      flex: auto;
+      border-bottom: 1px solid #000000;
+    }
+
+    .suffix {
+      white-space: nowrap;
+    }
+  }
+
+  .separator {
+    min-height: 1px;
+    max-height: 1px;
+    height: 1px;
+    background: #000000;
+    width: 100%;
+  }
+
+  #separator {
+    transform: translate(0px, 60px) !important;
+    height: 4px !important;
+    position: absolute;
+    width: 100% !important;
   }
 }

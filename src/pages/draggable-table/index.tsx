@@ -4,21 +4,54 @@ import { v4 as uuidv4 } from 'uuid';
 import './index.less';
 import _ from 'lodash';
 
-import RGL, { WidthProvider } from 'react-grid-layout';
+import GridLayout from 'react-grid-layout';
+import { mockData } from '@/pages/draggable-table/mock';
 
-const GridLayout = WidthProvider(RGL);
+const ROW_HEIGHT = 40;
 
 const DraggableTableContainer = (props: any) => {
   const [layout, setLayout] = useState([]);
 
+  const [tableWidth, setTableWidth] = useState(0);
+
   const COL_NUM = 24;
 
   useEffect(() => {
-    let layouts = localStorage.getItem('layout')
+    let savedLayouts = localStorage.getItem('layout')
       ? JSON.parse(localStorage.getItem('layout'))
-      : generateLayout();
+      : [];
+    let layouts = generateLayout(savedLayouts);
     setLayout(layouts);
     localStorage.setItem('layout', JSON.stringify(layouts));
+
+    console.error(
+      'width',
+      document.getElementById('draggable-table-container')?.offsetWidth - 20,
+    );
+
+    window.addEventListener('load', () => {
+      console.error(
+        'width',
+        document.getElementById('draggable-table-container')?.offsetWidth - 20,
+      );
+      setTimeout(() => {
+        setTableWidth(
+          document.getElementById('draggable-table-container')?.offsetWidth -
+            20,
+        );
+      }, 0);
+    });
+
+    window.addEventListener('resize', () => {
+      setTableWidth(
+        document.getElementById('draggable-table-container')?.offsetWidth - 20,
+      );
+    });
+
+    return () => {
+      window.removeEventListener('load', () => {});
+      window.removeEventListener('resize', () => {});
+    };
   }, []);
 
   const defaultProps = {
@@ -42,65 +75,49 @@ const DraggableTableContainer = (props: any) => {
     );
   };
 
-  const generateLayout = () => {
-    let disableYAxisNumber = [0, 10, 15];
+  const generateLayout = (savedLayouts: any[]) => {
+    let layouts = [];
 
-    let nonStaticLayouts = _.map(
-      new Array(defaultProps.items),
-      function (item, i) {
-        const y =
-          _.result(defaultProps, 'y') || Math.ceil(Math.random() * 4) + 1;
-        let yAxis = Math.floor(i / 6) * y;
-        if (disableYAxisNumber.includes(yAxis)) {
-          yAxis += 1;
-        }
-        return {
-          x: (i * 2) % 12,
-          y: yAxis,
-          w: 4,
+    mockData.forEach((items, moduleIndex) => {
+      items.forEach((item, index) => {
+        let previousLayout =
+          savedLayouts.find(
+            (savedLayout) => savedLayout.i === item?.data?.key,
+          ) || {};
+
+        layouts.push({
+          y: moduleIndex,
           h: 1,
-          i: i.toString(),
-          minW: 4,
+          i: item.data.key,
+          minW: 2,
           maxW: 10,
           maxH: 1,
           minH: 1,
-        };
-      },
-    );
+          isResizable: false,
+          ...item,
+          ...previousLayout,
+        });
+      });
+    });
 
-    let staticLayouts = [
-      {
-        x: 0,
-        y: 0,
-        w: 24,
-        h: 1,
-        i: '测试用header1',
-        static: true,
-      },
-      {
-        x: 0,
-        y: 10,
-        w: 24,
-        h: 1,
-        i: '测试用header2',
-        static: true,
-      },
-      {
-        x: 0,
-        y: 15,
-        w: 24,
-        h: 1,
-        i: '测试用header3',
-        static: true,
-      },
-    ];
+    layouts.push({
+      x: 0,
+      y: 1,
+      h: 0.1,
+      w: 24,
+      i: 'separator',
+      minW: 24,
+      maxW: 10,
+      maxH: 0.1,
+      minH: 0.1,
+      isResizable: false,
+      static: true,
+    });
 
-    return nonStaticLayouts.concat(staticLayouts);
+    return layouts;
   };
 
   const onLayoutChange = (layout, layouts) => {
-    console.error('onLayoutChange', layout, layouts);
-
     localStorage.setItem('layout', JSON.stringify(layout));
   };
 
@@ -113,22 +130,25 @@ const DraggableTableContainer = (props: any) => {
         className="layout"
         // layouts={layout}
         layout={layout}
-        rowHeight={40}
+        rowHeight={ROW_HEIGHT}
         verticalCompact={false}
         isBounded={true}
-        margin={[20, 10]}
+        margin={[20, 16]}
         // breakpoints={{ lg: 1366, md: 1280, sm: 1024, xs: 480, xxs: 0 }}
         // cols={{ lg: 24, md: 20, sm: 12, xs: 8, xxs: 4 }}
         cols={COL_NUM}
-        width={
-          document.getElementById('draggable-table-container')?.offsetWidth
-        }
+        width={tableWidth}
         onLayoutChange={(layout, layouts) => onLayoutChange(layout, layouts)}
       >
+        {/*TODO separator id 覆盖 样式*/}
         {layout.map((item) => {
           return (
-            <div key={item.i}>
-              <Input placeholder={`${item.i}输入框`} />
+            <div id={item.i} key={item.i}>
+              {item.i === 'separator' ? (
+                <SeparatorItem key={uuidv4()} />
+              ) : (
+                <GridItem key={uuidv4()} data={item.data} />
+              )}
             </div>
           );
         })}
@@ -136,5 +156,37 @@ const DraggableTableContainer = (props: any) => {
     </div>
   );
 };
+
+const SeparatorItem = React.forwardRef(
+  (
+    { style, className, onMouseDown, onMouseUp, onTouchEnd, ...props }: any,
+    ref: any,
+  ) => {
+    return <div className={'separator'} />;
+  },
+);
+
+interface GridItemProps {
+  data: any;
+}
+
+const GridItem = React.forwardRef((props: GridItemProps) => {
+  return (
+    <div className={'grid-item-container'}>
+      {props.data?.prefix && (
+        <span className={'prefix'}>{props.data?.prefix}</span>
+      )}
+      <div
+        className={`${props.data?.props?.className || ''} input`}
+        style={props.data?.props?.style || {}}
+      >
+        <Input bordered={false} placeholder={`请输入${props.data?.desc}`} />
+      </div>
+      {props.data?.suffix && (
+        <span className={'suffix'}>{props.data?.suffix}</span>
+      )}
+    </div>
+  );
+});
 
 export default DraggableTableContainer;
