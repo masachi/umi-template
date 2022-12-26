@@ -31,7 +31,11 @@ export const menuData: MenuData[] = [
   },
   {
     route: '/draggable-table',
-    name: '测试用拖动table',
+    name: '可拖动table',
+  },
+  {
+    route: '/static-table',
+    name: '静态table',
   },
   {
     route: '/coordinate-table',

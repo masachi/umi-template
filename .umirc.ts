@@ -129,6 +129,12 @@ export default defineConfig({
         },
         {
           exact: true,
+          path: '/static-table',
+          component: '@/pages/static-table/index',
+          wrappers: ['@/layouts/base-layout'],
+        },
+        {
+          exact: true,
           path: '/coordinate-table',
           component: '@/pages/coordinate-table/index',
           wrappers: ['@/layouts/base-layout'],

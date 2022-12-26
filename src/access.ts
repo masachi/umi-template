@@ -8,7 +8,8 @@ export default function (initialState: any): any {
     '/table/2': true,
     '/table/2/3': true,
     '/draggable-table': true,
-    '/coordinate-table': true,
+    '/static-table': true,
+    '/coordinate-table': false,
     '/coordinate-draggable-table': false,
   };
 }
