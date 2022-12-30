@@ -1,4 +1,12 @@
-export const mockData = [
+import { IGridItem } from '@/pages/draggable-table/interfaces';
+import {
+  DRG_TABLE_COLUMN,
+  FIELD_ADD_TABLE_COLUMN,
+  SURGERY_TABLE_COLUMN,
+} from '@/pages/draggable-table/constants';
+import { v4 as uuidv4 } from 'uuid';
+
+export const mockData: IGridItem[][] = [
   [
     {
       data: {
@@ -6,6 +14,7 @@ export const mockData = [
         key: 'qdlsh',
         desc: '清单流水号',
         suffix: '',
+        component: 'Input',
       },
       x: 18,
       w: 6,
@@ -92,11 +101,21 @@ export const mockData = [
         key: 'xb',
         desc: '性别',
         suffix: '1.男 2.女',
+        component: 'Input',
         props: {
           style: {
             maxWidth: 100,
           },
           className: '',
+          postValueProcessor: (value) => {
+            if (value.toString() === '1') {
+              return '男';
+            } else if (value.toString() === '2') {
+              return '女';
+            } else {
+              return value;
+            }
+          },
         },
       },
       x: 5,
@@ -108,6 +127,13 @@ export const mockData = [
         key: 'csrq',
         desc: '出生日期',
         suffix: '',
+        component: 'DatePicker',
+        props: {
+          style: {
+            width: '100%',
+          },
+          className: 'border-none',
+        },
       },
       x: 9,
       w: 4,
@@ -118,6 +144,15 @@ export const mockData = [
         key: 'nl',
         desc: '年龄（岁）',
         suffix: '岁',
+        component: 'InputNumber',
+        props: {
+          style: {
+            width: '100%',
+          },
+          min: 1,
+          max: 200,
+          className: 'border-none',
+        },
       },
       x: 13,
       w: 4,
@@ -173,6 +208,68 @@ export const mockData = [
       },
       x: 16,
       w: 8,
+    },
+  ],
+  [
+    {
+      data: {
+        key: 'drg-table',
+        component: 'Table',
+        props: {
+          id: 'drg-table',
+          className: '',
+          rowKey: 'id',
+          bordered: true,
+          columns: DRG_TABLE_COLUMN,
+          pagination: false,
+        },
+      },
+      x: 0,
+      h: 4,
+      w: 12,
+    },
+    {
+      data: {
+        key: 'surgery-table',
+        component: 'Table',
+        props: {
+          id: 'surgery-table',
+          className: '',
+          rowKey: 'id',
+          bordered: true,
+          columns: SURGERY_TABLE_COLUMN,
+          pagination: false,
+        },
+      },
+      x: 12,
+      h: 4,
+      w: 12,
+    },
+  ],
+  [
+    {
+      data: {
+        prefix: '时间',
+        key: 'time',
+        desc: '',
+        suffix: '',
+        component: 'TimeInput',
+      },
+      x: 0,
+      w: 6,
+    },
+  ],
+  [
+    {
+      data: {
+        prefix: '现住址',
+        key: 'address',
+        desc: '',
+        suffix: '',
+        component: 'ProvinceSeparateSelector',
+      },
+      x: 0,
+      w: 24,
     },
   ],
   // {

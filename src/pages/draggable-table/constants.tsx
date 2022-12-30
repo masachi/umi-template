@@ -37,3 +37,29 @@ export const FIELD_ADD_TABLE_COLUMN = [
     },
   },
 ];
+
+export const DRG_TABLE_COLUMN = [
+  {
+    dataIndex: 'drgCode',
+    title: '病种代码',
+    visible: true,
+  },
+  {
+    dataIndex: 'drgName',
+    title: '病种名称',
+    visible: true,
+  },
+];
+
+export const SURGERY_TABLE_COLUMN = [
+  {
+    dataIndex: 'surgeryCode',
+    title: '手术代码',
+    visible: true,
+  },
+  {
+    dataIndex: 'surgeryName',
+    title: '手术名称',
+    visible: true,
+  },
+];

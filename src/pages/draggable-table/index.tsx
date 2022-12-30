@@ -10,6 +10,9 @@ import UniTable from '@/components/table';
 import { HOSPITAL_LEVEL_DATA_ANALYSIS_COLUMNS } from '@/pages/table/constants';
 import { FIELD_ADD_TABLE_COLUMN } from '@/pages/draggable-table/constants';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { dynamicComponentsMap } from '@/components';
+import { IGridItemData } from '@/pages/draggable-table/interfaces';
+import { Emitter } from '@/utils/emitter';
 
 const ROW_HEIGHT = 40;
 
@@ -295,10 +298,14 @@ const SeparatorItem = React.forwardRef(
 );
 
 interface GridItemProps {
-  data: any;
+  data: IGridItemData;
 }
 
 const GridItem = React.forwardRef((props: GridItemProps) => {
+  const DynamicComponent = props.data?.component
+    ? (dynamicComponentsMap[`Uni${props.data?.component}`] as React.FC)
+    : undefined;
+
   return (
     <div className={'grid-item-container'}>
       {props.data?.prefix && (
@@ -308,11 +315,22 @@ const GridItem = React.forwardRef((props: GridItemProps) => {
         className={`${props.data?.props?.className || ''} input`}
         style={props.data?.props?.style || {}}
       >
-        <Input
-          bordered={false}
-          disabled={true}
-          placeholder={`请输入${props.data?.desc}`}
-        />
+        {
+          // TODO 先行写死 默认input  后期 如果不给component name 认为无效框
+          props.data?.component ? (
+            <DynamicComponent
+              className={`grid-item-base ${props?.data?.props?.className}`}
+              {...props.data?.props}
+              // dataSource={mockDatasource[headerItem?.props?.dataKey] || []}
+            />
+          ) : (
+            <Input
+              bordered={false}
+              disabled={true}
+              placeholder={`请输入${props.data?.desc}`}
+            />
+          )
+        }
       </div>
       {props.data?.suffix && (
         <span className={'suffix'}>{props.data?.suffix}</span>

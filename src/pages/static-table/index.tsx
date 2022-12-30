@@ -6,13 +6,30 @@ import _ from 'lodash';
 
 import GridLayout from 'react-grid-layout';
 import { mockData } from '@/pages/draggable-table/mock';
+import { dynamicComponentsMap } from '@/components';
+import { IGridItemData } from '@/pages/draggable-table/interfaces';
+import { Emitter, EventConstant } from '@/utils/emitter';
+import UniTimeInput from '@/pages/draggable-table/components/time-input';
 
 const ROW_HEIGHT = 40;
+
+const componentMap = {
+  ...dynamicComponentsMap,
+  UniTimeInput: UniTimeInput,
+};
 
 const separators = [
   {
     x: 0,
     y: 1,
+    h: 0.1,
+    w: 24,
+    i: 'separator',
+    static: true,
+  },
+  {
+    x: 0,
+    y: 5,
     h: 0.1,
     w: 24,
     i: 'separator',
@@ -26,6 +43,10 @@ const StaticTableContainer = (props: any) => {
   const [loading, setLoading] = useState(true);
 
   const [tableWidth, setTableWidth] = useState(0);
+
+  const [tableValue, setTableValue] = useState({
+    qdlsh: '12345678',
+  });
 
   const COL_NUM = 24;
 
@@ -44,6 +65,21 @@ const StaticTableContainer = (props: any) => {
       document.getElementById('draggable-table-container')?.offsetWidth - 20,
     );
   }, [loading]);
+
+  useEffect(() => {
+    // event
+    Emitter.on(EventConstant.STATIC_TABLE_VALUE_CHANGE, (data) => {
+      console.error('onchange data', data);
+
+      setTableValue({
+        ...tableValue,
+        ...data,
+      });
+    });
+    return () => {
+      Emitter.off(EventConstant.STATIC_TABLE_VALUE_CHANGE);
+    };
+  }, [tableValue]);
 
   const defaultProps = {
     className: 'layout',
@@ -69,27 +105,34 @@ const StaticTableContainer = (props: any) => {
   const generateLayout = (savedLayouts: any[]) => {
     let layouts = [];
 
+    let yAxis = 0;
     mockData.forEach((items, moduleIndex) => {
+      let currentLineHeight = 0;
       items.forEach((item, index) => {
+        currentLineHeight = item.h || 1;
+
         let previousLayout =
           savedLayouts.find(
             (savedLayout) => savedLayout.i === item?.data?.key,
           ) || {};
 
         layouts.push({
-          y: moduleIndex,
-          h: 1,
+          y: yAxis,
+          h: currentLineHeight,
           i: item.data.key,
           minW: 2,
           maxW: 10,
-          maxH: 1,
-          minH: 1,
-          static: true,
+          maxH: currentLineHeight,
+          minH: currentLineHeight,
           ...item,
           ...previousLayout,
           resizeHandles: [],
+          static: true,
+          isDraggable: false,
         });
       });
+
+      yAxis += currentLineHeight;
     });
 
     return layouts;
@@ -108,15 +151,32 @@ const StaticTableContainer = (props: any) => {
       ) : (
         <>
           {separators.map((item) => {
+            let currentRowLayouts = layout.find(
+              (layoutItem) => item.y === layoutItem.y,
+            );
+            let currentRowItemTransform = document.getElementById(
+              currentRowLayouts?.i,
+            )?.style?.transform;
+
+            let positions = currentRowItemTransform?.match(/\d+/g);
+
             return (
-              <div
-                className={'separator-container'}
-                style={{
-                  transform: `translate(10px, ${item.y * ROW_HEIGHT + 30}px)`,
-                }}
-              >
-                <div className={'separator'} />
-              </div>
+              <>
+                {currentRowLayouts &&
+                currentRowItemTransform &&
+                positions.length > 1 ? (
+                  <div
+                    className={'separator-container'}
+                    style={{
+                      transform: `translate(10px, ${parseInt(
+                        positions?.at(1),
+                      )}px)`,
+                    }}
+                  >
+                    <div className={'separator'} />
+                  </div>
+                ) : null}
+              </>
             );
           })}
           <GridLayout
@@ -142,7 +202,12 @@ const StaticTableContainer = (props: any) => {
                   {item.i === 'separator' ? (
                     <SeparatorItem key={uuidv4()} />
                   ) : (
-                    <GridItem key={uuidv4()} data={item.data} />
+                    // <GridItem key={uuidv4()} data={item.data} value={tableValue[item?.data?.dataKey]}/>
+                    <GridItem
+                      key={uuidv4()}
+                      data={item.data}
+                      value={tableValue[item?.data?.key]}
+                    />
                   )}
                 </div>
               );
@@ -164,20 +229,40 @@ const SeparatorItem = React.forwardRef(
 );
 
 interface GridItemProps {
-  data: any;
+  data: IGridItemData;
+  value?: any;
 }
 
 const GridItem = React.forwardRef((props: GridItemProps) => {
+  const DynamicComponent = props.data?.component
+    ? (componentMap[`Uni${props.data?.component}`] as React.FC)
+    : undefined;
+
   return (
     <div className={'grid-item-container'}>
       {props.data?.prefix && (
         <span className={'prefix'}>{props.data?.prefix}</span>
       )}
-      <div
-        className={`${props.data?.props?.className || ''} input`}
-        style={props.data?.props?.style || {}}
-      >
-        <Input bordered={false} placeholder={`请输入${props.data?.desc}`} />
+      <div className={`input`} style={props.data?.props?.style || {}}>
+        {
+          // TODO 先行写死 默认input  后期 如果不给component name 认为无效框
+          props.data?.component ? (
+            <DynamicComponent
+              className={`grid-item-base ${props?.data?.props?.className}`}
+              {...props.data?.props}
+              // dataSource={mockDatasource[headerItem?.props?.dataKey] || []}
+              value={props?.value}
+              onChange={(value) => {
+                let payload = {};
+                // payload[`${props?.data?.dataKey}`] = value;
+                payload[`${props?.data?.key}`] = value;
+                Emitter.emit(EventConstant.STATIC_TABLE_VALUE_CHANGE, payload);
+              }}
+            />
+          ) : (
+            <Input bordered={false} placeholder={`请输入${props.data?.desc}`} />
+          )
+        }
       </div>
       {props.data?.suffix && (
         <span className={'suffix'}>{props.data?.suffix}</span>
