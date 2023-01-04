@@ -116,7 +116,7 @@ export const request: any = {
     async (url, options: any) => {
       const { headers, responseType, method } = options;
 
-      url = url.replaceAll('//', '/');
+      url = url.replace(/([^:]\/)\/+/g, '$1');
 
       let addHeaders: any = {};
       let cacheOption = {
