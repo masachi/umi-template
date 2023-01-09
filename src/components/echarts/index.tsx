@@ -12,6 +12,7 @@ echarts.registerTheme('themeBlueYellow', themeBlueYellow);
 export interface EchartsCardProps {
   elementId: string; //元素Id
   options: any; //echartsOptions
+  height?: number;
   backgroundColor?: string; //背景色
   title?: string; //标题
   loading?: boolean; //loading
@@ -19,8 +20,9 @@ export interface EchartsCardProps {
   seriesClick?: (params) => void;
 }
 
-const EchartsCard: React.FC<EchartsCardProps> = ({
+const UniEcharts: React.FC<EchartsCardProps> = ({
   backgroundColor = '#fff',
+  height = 400,
   elementId,
   title,
   options = {},
@@ -98,7 +100,11 @@ const EchartsCard: React.FC<EchartsCardProps> = ({
   }, [options, mouseEvents]);
 
   return (
-    <div id={'echarts-card-body'} className={styles.flex_center}>
+    <div
+      id={'echarts-card-body'}
+      className={styles.flex_center}
+      style={{ height: height }}
+    >
       <div ref={chartRef} id={elementId} className={styles.canvas}></div>
       {isEmptyOpt && (
         <div
@@ -123,4 +129,4 @@ const EchartsCard: React.FC<EchartsCardProps> = ({
   );
 };
 
-export default EchartsCard;
+export default UniEcharts;

@@ -1,4 +1,4 @@
-import { Button, Skeleton, Space } from 'antd';
+import { Button, Skeleton, Space, TablePaginationConfig } from 'antd';
 import React, {
   CSSProperties,
   ReactNode,
@@ -24,12 +24,20 @@ import Toolbar from '@ant-design/pro-table/es/components/ToolBar';
 import { processSummaryData } from '@/components/table/processor/data/summary-data';
 import { exportExcel } from '@/utils/excel-export';
 import cloneDeep from 'lodash/cloneDeep';
+import ColumnDefinitionProcessor from '@/components/table/processor/column/columnDefinitionProcessor';
 
 const defaultOptions = {
   density: false,
   reload: false,
   setting: false,
   fullScreen: false,
+};
+
+const defaultPagination: TablePaginationConfig = {
+  size: 'default',
+  pageSize: 10,
+  pageSizeOptions: ['10', '20'],
+  hideOnSinglePage: true,
 };
 
 interface ColumnItem<RecordType> extends ColumnType<RecordType> {
@@ -42,6 +50,8 @@ interface UniTableProps<T, U = ParamsType> extends ProTableProps<T, U> {
   tableHeader?: React.ReactNode;
   tableHeaderTitle?: string;
   columns?: any[];
+  dataItemType?: string;
+  columnDefinitions?: object;
   dataSource?: any[];
   rowKey: string;
   scroll?: object;
@@ -71,6 +81,8 @@ interface UniTableProps<T, U = ParamsType> extends ProTableProps<T, U> {
   exportName?: string;
   exportExcludeKeys?: string[];
   exportTableDataSourceProcessor?: (dataSource: any[]) => any[];
+  // 是否能点击
+  clickable?: boolean;
 }
 
 const UniTable = ({
@@ -79,6 +91,8 @@ const UniTable = ({
   tableHeaderTitle,
   columns,
   dataSource,
+  dataItemType,
+  columnDefinitions,
   columnsFetch,
   columnItemProcessor,
   dataFetch,
@@ -94,6 +108,8 @@ const UniTable = ({
   summaryData,
   exportName,
   exportExcludeKeys,
+  pagination,
+  clickable,
   ...restProps
 }: UniTableProps<any>) => {
   const [tableColumns, setTableColumns] = useState([]);
@@ -132,6 +148,7 @@ const UniTable = ({
 
   useEffect(() => {
     let processors = [
+      // ColumnDefinitionProcessor,
       commonColumnProcessor,
       FilterItemProcessor,
       SearchItemProcessor,
@@ -175,7 +192,11 @@ const UniTable = ({
       columnItem.render = (node, record, index) => {
         return (
           <span>
-            {valueNullOrUndefinedReturnDash(record[columnItem.dataIndex])}
+            {valueNullOrUndefinedReturnDash(
+              record[columnItem.dataIndex],
+              columnItem['x-type'] || columnItem['format'],
+              columnItem['x-scale'],
+            )}
           </span>
         );
       };
@@ -210,6 +231,9 @@ const UniTable = ({
         item = Object.assign(
           {},
           processor({
+            // definitionProcessor
+            dataItemType: dataItemType,
+            columnDefinitions: columnDefinitions,
             columnItem: item,
             ...item,
             backendPagination: false,
@@ -416,7 +440,11 @@ const UniTable = ({
           onChange && onChange(pagination, filters, sorter, extra);
         }}
         scroll={scroll}
-        pagination={false}
+        pagination={
+          pagination !== false
+            ? { ...defaultPagination, ...(pagination || {}) }
+            : false
+        }
         toolBarRender={false}
         {...restProps}
         search={false}
@@ -426,7 +454,9 @@ const UniTable = ({
           return {
             ...(restProps?.onRow || {}),
             onClick: (event) => {
-              Emitter.emit(EventConstant.TABLE_ROW_CLICK, { record, index });
+              if (clickable) {
+                Emitter.emit(EventConstant.TABLE_ROW_CLICK, { record, index });
+              }
             },
           };
         }}
