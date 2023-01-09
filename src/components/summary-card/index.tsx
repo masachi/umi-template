@@ -24,6 +24,7 @@ export interface DataItem {
 
   // type === summary
   label?: string;
+  suffix?: string;
   icon?: any;
   summaryData?: SummaryDataItem[];
 
@@ -40,6 +41,7 @@ export interface SummaryDataItem {
 
 interface InfoItem {
   label?: string;
+  suffix?: string;
   value?: string;
   dataType?: string;
   dataScale?: number;
@@ -144,6 +146,7 @@ const SummaryItem = ({ data, clickedDataTypes }) => {
         <div className={'label-container'}>
           {data.icon}
           <span>{data.label}</span>
+          {data?.suffix && <span>{data.suffix}</span>}
         </div>
 
         <div className={'values-container'}>
@@ -235,6 +238,7 @@ const SummaryInfoItem = ({ data, clickedDataTypes }) => {
                 }}
               >
                 <span className={'label'}>{infoItem.label}</span>
+                {infoItem?.suffix && <span>{infoItem.suffix}</span>}
                 <span className={'value ellipsis'} style={infoItem?.style}>
                   {valueNullOrUndefinedReturnDash(
                     infoItem?.value,

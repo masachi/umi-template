@@ -65,7 +65,8 @@ const SiteHeader = (props: SiteHeaderProps) => {
           <Button
             icon={<ExclamationCircleOutlined />}
             onClick={() => {
-              window.open('http://192.192.12.85:5005/ChromeSetup64.exe');
+              // TODO 浏览器地址 修改
+              // window.open('http://192.192.12.85:5005/ChromeSetup64.exe');
             }}
           >
             下载新版浏览器

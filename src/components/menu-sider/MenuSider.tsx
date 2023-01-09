@@ -3,21 +3,46 @@ import React, { Component, useEffect, useLayoutEffect, useState } from 'react';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import './index.less';
 import { Menu } from 'antd';
-import { MenuData, menuData } from '@/layouts/menuData';
-import { useAccess, Link } from 'umi';
+import { useAccess, Link, Location, useLocation } from 'umi';
+
+import logo from '@/assets/logo.png';
+import { menuData, MenuData } from '@/layouts/menuData';
 
 const { SubMenu } = Menu;
 const qs = require('qs');
 
-interface MenuSiderProps {}
+interface MenuSiderProps {
+  bizRoutes?: any[];
+}
 
 const MenuSider = (props: MenuSiderProps) => {
   const [collapsed, setCollapsed] = useState(false);
 
   const access = useAccess();
 
+  const location: Location = useLocation();
+
   const getCurrentOpenKeysByLocation = () => {
     let openedKeys: string[] = [];
+
+    // FIXME: pathname 对应 打开的 menu
+    if (location?.pathname) {
+      if (location?.pathname?.startsWith('')) {
+        openedKeys.push('');
+      } else {
+        openedKeys.push('');
+      }
+    }
+
+    return openedKeys;
+  };
+
+  const getCurrentSelectedKeysByLocation = () => {
+    let openedKeys: string[] = [];
+
+    if (location?.pathname) {
+      openedKeys.push(location?.pathname);
+    }
 
     return openedKeys;
   };
@@ -90,6 +115,7 @@ const MenuSider = (props: MenuSiderProps) => {
       }
     >
       <div className="sider-logo">
+        {/*FIXME: logo*/}
         <a href="/dashboard/index" className="font-white">
           {collapsed ? '' : '测试用'}
         </a>
@@ -99,6 +125,7 @@ const MenuSider = (props: MenuSiderProps) => {
         mode="inline"
         inlineIndent={18}
         defaultOpenKeys={getCurrentOpenKeysByLocation()}
+        defaultSelectedKeys={getCurrentSelectedKeysByLocation()}
         onClick={({ domEvent }) => {
           // domEvent.stopPropagation();
         }}

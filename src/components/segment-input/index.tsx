@@ -81,7 +81,11 @@ const SegmentInput = (props: SegmentInputProps) => {
           className={`input ${props.className}`}
           style={{ borderLeftWidth: 0 }}
           placeholder={props.placeholders?.at(1) || '上界'}
-          value={segmentInputValues?.at(1)}
+          value={
+            segmentInputValues?.at(1) === ''
+              ? Constants.SegmentInputLabel.INFINITY_LABEL
+              : segmentInputValues?.at(1)
+          }
           min={segmentInputValues?.at(0) || 0}
           onChange={(event) => {
             onInputChange(transformMaxValueToInfinityLabel(10, event), 1);
