@@ -1,0 +1,41 @@
+.drag-items-container {
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  width: 100%;
+  overflow-y: auto;
+
+  .drag-item-container {
+    display: flex;
+    user-select: none;
+    padding: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.5;
+    border-radius: 3px;
+    background-color: #f9fafb;
+    border: 1px solid #ddd;
+    margin: 5px;
+  }
+
+  .drag-placeholder-item-container {
+    display: flex;
+    user-select: none;
+    padding: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.5;
+    border-radius: 3px;
+    background-color: #f9fafb;
+    border: 1px solid #ddd;
+    margin: 5px;
+  }
+
+  // 同一父级元素下 当前元素 所有之后的元素
+  .drag-placeholder-item-container ~ div {
+    transform: none !important;
+  }
+
+  .dragging {
+    border: 1px dashed #4099ff !important;
+  }
+}

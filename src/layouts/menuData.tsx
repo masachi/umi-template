@@ -14,6 +14,10 @@ export interface MenuData {
  */
 export const menuData: MenuData[] = [
   {
+    route: '/low-code',
+    name: 'low-code测试用',
+  },
+  {
     route: '/table',
     name: '测试用table',
     children: [

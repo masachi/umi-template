@@ -112,7 +112,13 @@ export default defineConfig({
         {
           exact: true,
           path: '/',
-          redirect: '/table/2/3',
+          redirect: '/low-code',
+        },
+        {
+          exact: true,
+          path: '/low-code',
+          component: '@/pages/low-code/index',
+          wrappers: ['@/layouts/base-layout'],
         },
         {
           exact: true,

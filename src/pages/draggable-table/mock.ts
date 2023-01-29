@@ -253,7 +253,6 @@ export const mockData: IGridItem[][] = [
         key: 'time',
         desc: '',
         suffix: '',
-        component: 'TimeInput',
       },
       x: 0,
       w: 6,
