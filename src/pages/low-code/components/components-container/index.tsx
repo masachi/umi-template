@@ -1,6 +1,6 @@
 import React from 'react';
 import { Draggable, Droppable, DroppableProvided } from 'react-beautiful-dnd';
-import fields from '@/pages/low-code/components/components-container/basic';
+import fields from '@/pages/low-code/components/components-container/fields/index';
 import './index.less';
 
 const ComponentsMenu = () => {
@@ -14,7 +14,7 @@ const ComponentsMenu = () => {
             isDraggingOver={snapshot.isDraggingOver}
           >
             {fields.map((item, index) => (
-              <Draggable key={item.type} draggableId={item.type} index={index}>
+              <Draggable key={item.name} draggableId={item.name} index={index}>
                 {(provided, snapshot) => (
                   <>
                     <div
@@ -29,17 +29,18 @@ const ComponentsMenu = () => {
                         ...provided.draggableProps.style,
                       }}
                     >
-                      {item.type}
+                      {item.name}
                     </div>
                     {snapshot.isDragging && (
                       <div className={'drag-placeholder-item-container'}>
-                        {item.type}
+                        {item.name}
                       </div>
                     )}
                   </>
                 )}
               </Draggable>
             ))}
+            {provided.placeholder}
           </div>
         )}
       </Droppable>

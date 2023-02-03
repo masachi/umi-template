@@ -1,0 +1,93 @@
+@import '/src/varible.less';
+
+.column-add {
+  display: flex !important;
+  align-items: flex-start;
+  padding: 5px 0px !important;
+}
+
+.column-body-label {
+  color: @edit-container-font-color;
+  font-size: @edit-container-font-size;
+  margin-top: 5px;
+}
+
+.column-item-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .input {
+    display: flex;
+    flex: 1;
+    margin: 10px;
+  }
+
+  .ant-btn {
+    padding: 0 !important;
+  }
+
+  .icon {
+    cursor: pointer;
+  }
+
+  .operation-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .delete {
+      margin-right: 10px;
+    }
+  }
+}
+
+.column-drawer-container {
+  right: 310px !important;
+  position: absolute !important;
+  padding-bottom: 0px !important;
+  top: 0 !important;
+
+  .input {
+    display: flex;
+    flex: 1;
+    margin: 10px;
+  }
+
+  .header-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ant-modal-content {
+    height: 100%;
+
+    .ant-modal-body {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+    }
+
+    .ant-modal-confirm-content {
+      margin-left: 20px !important;
+    }
+
+    .ant-modal-confirm-body-wrapper {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+
+      .anticon {
+        display: none;
+      }
+
+      .ant-modal-confirm-btns {
+        display: none;
+      }
+    }
+  }
+}

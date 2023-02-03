@@ -6,12 +6,58 @@ import {
   DroppableProvided,
 } from 'react-beautiful-dnd';
 import ComponentsMenu from '@/pages/low-code/components/components-container';
-import { useState } from 'react';
-import fields from '@/pages/low-code/components/components-container/basic';
+import { useEffect, useState } from 'react';
+import fields from '@/pages/low-code/components/components-container/fields/index';
 import { v4 as uuidv4 } from 'uuid';
+import { Emitter, EventConstant } from '@/utils/emitter';
+import RightEditor from '@/pages/low-code/components/editor';
+import cloneDeep from 'lodash/cloneDeep';
 
 export default function LowCode() {
   const [selectedComponents, setSelectedComponents] = useState([]);
+
+  useEffect(() => {
+    Emitter.on(EventConstant.DROPPABLE_CONTAINER_DELETE_CLICK, (deleteId) => {
+      let deleteIndex = selectedComponents.findIndex(
+        (item) => item.i === deleteId,
+      );
+      if (deleteIndex > -1) {
+        selectedComponents.splice(deleteIndex, 1);
+      }
+
+      setSelectedComponents(selectedComponents.slice());
+    });
+
+    Emitter.on(EventConstant.RIGHT_CONTAINER_PROPS_CHANGE, (data) => {
+      let changedComponent = selectedComponents.find(
+        (item) => item.i === data.id,
+      );
+      if (changedComponent) {
+        changedComponent.data.props = Object.assign(
+          {},
+          changedComponent.data.props,
+          data?.props,
+        );
+        setSelectedComponents(selectedComponents.slice());
+      }
+    });
+
+    Emitter.on(EventConstant.RIGHT_CONTAINER_CARD_TITLE_CHANGE, (data) => {
+      let changedComponent = selectedComponents.find(
+        (item) => item.i === data.id,
+      );
+      if (changedComponent) {
+        changedComponent.data.cardTitle = data?.cardTitle;
+        setSelectedComponents(selectedComponents.slice());
+      }
+    });
+
+    return () => {
+      Emitter.off(EventConstant.DROPPABLE_CONTAINER_DELETE_CLICK);
+      Emitter.off(EventConstant.RIGHT_CONTAINER_PROPS_CHANGE);
+      Emitter.off(EventConstant.RIGHT_CONTAINER_CARD_TITLE_CHANGE);
+    };
+  }, [selectedComponents]);
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
@@ -26,8 +72,8 @@ export default function LowCode() {
     // 从source来
     if (source.droppableId === 'items') {
       let currentSelectedComponent = selectedComponents.slice();
-      let dropComponent = fields.find(
-        (item) => item.type === result.draggableId,
+      let dropComponent = cloneDeep(fields).find(
+        (item) => item.name === result.draggableId,
       );
       if (dropComponent) {
         currentSelectedComponent.push({
@@ -37,23 +83,27 @@ export default function LowCode() {
           y: 0,
           w: 3,
           h: 2,
+          ...(dropComponent?.position || {}),
         });
       }
 
       setSelectedComponents(currentSelectedComponent);
+      // Emitter.emit(EventConstant.COMPONENT_DROPPED, currentSelectedComponent)
     }
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className={'low-code-container'}>
+      <div className={'low-code-container'} id={'low-code-container'}>
         <div className={'left-container'}>
           <ComponentsMenu />
         </div>
         <div className={'middle-container'}>
           <DragContainer data={selectedComponents} />
         </div>
-        <div className={'right-container'}></div>
+        <div className={'right-container'}>
+          <RightEditor />
+        </div>
       </div>
     </DragDropContext>
   );

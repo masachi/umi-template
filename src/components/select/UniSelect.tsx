@@ -21,6 +21,7 @@ interface UniSelectProps extends SelectProps {
   placeholder?: string;
   showSearch?: boolean;
   label?: string;
+  getPopupContainer: (props: any) => HTMLElement;
 }
 
 const UniSelect: FC<UniSelectProps> = ({
@@ -33,6 +34,7 @@ const UniSelect: FC<UniSelectProps> = ({
   onFilterOptions,
   enablePinyinSearch = true,
   label,
+  getPopupContainer,
   ...restProps
 }: UniSelectProps) => {
   const [selectedValue, setSelectedValue] = useState(undefined);
@@ -47,7 +49,13 @@ const UniSelect: FC<UniSelectProps> = ({
         showSearch
         allowClear={restProps?.allowClear || true}
         value={restProps.value || selectedValue}
-        getPopupContainer={(trigger) => trigger?.parentElement || document.body}
+        getPopupContainer={(trigger) => {
+          if (getPopupContainer) {
+            return getPopupContainer(trigger);
+          }
+
+          return trigger?.parentElement || document.body;
+        }}
         placeholder={dataSource?.length ? `${restProps?.placeholder}` : ''}
         filterOption={(inputValue, option) => {
           let filterOptionsResult = true;

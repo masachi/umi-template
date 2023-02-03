@@ -4,6 +4,7 @@
   background: #ffffff;
   height: 100%;
   width: 100%;
+  position: relative;
 
   .left-container {
     display: flex;
@@ -21,5 +22,37 @@
     display: flex;
     flex-direction: column;
     width: 300px;
+  }
+
+  .ant-drawer-body {
+    padding: 12px !important;
+  }
+
+  .ant-modal-wrap {
+    position: absolute !important;
+  }
+
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .ant-card-head {
+      cursor: grab;
+    }
+
+    .ant-card-body {
+      display: flex;
+      flex: 1;
+      padding: 0px !important;
+      overflow: auto;
+    }
+
+    .body-container {
+      padding: 12px;
+      height: 100%;
+      width: 100%;
+      cursor: pointer;
+    }
   }
 }

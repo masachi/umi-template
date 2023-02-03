@@ -188,6 +188,12 @@ const UniTable = ({
 
   // default column processor
   const commonColumnProcessor = ({ columnItem }) => {
+    if (!columnItem.dataIndex) {
+      return {
+        ...columnItem,
+      };
+    }
+
     if (!columnItem.render) {
       columnItem.render = (node, record, index) => {
         return (
