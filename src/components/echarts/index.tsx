@@ -6,6 +6,7 @@ import { Empty, Spin } from 'antd';
 import styles from './index.less';
 import { isEmpty, isString } from 'lodash';
 import themeBlueYellow from './themes/themeBlueYellow';
+import { Emitter, EventConstant } from '@/utils/emitter';
 
 echarts.registerTheme('themeBlueYellow', themeBlueYellow);
 
@@ -35,6 +36,29 @@ const UniEcharts: React.FC<EchartsCardProps> = ({
   const isEmptyOpt = isEmpty(options);
 
   const chartRef = useRef();
+
+  const [echartsHeight, setEchartsHeight] = useState(height);
+
+  useEffect(() => {
+    Emitter.on(EventConstant.GRID_LAYOUT_RESIZE_STOP, () => {
+      if (document.getElementById('card-body-container')) {
+        setEchartsHeight(
+          document.getElementById('card-body-container')?.offsetHeight - 24 ||
+            height,
+        );
+      }
+
+      // resize
+      if (echarts.getInstanceByDom(chartRef.current)) {
+        setTimeout(() => {
+          echarts.getInstanceByDom(chartRef.current).resize();
+        }, 100);
+      }
+    });
+    return () => {
+      Emitter.off(EventConstant.GRID_LAYOUT_RESIZE_STOP);
+    };
+  }, []);
 
   useEffect(() => {
     let myChart =
@@ -103,7 +127,7 @@ const UniEcharts: React.FC<EchartsCardProps> = ({
     <div
       id={'echarts-card-body'}
       className={styles.flex_center}
-      style={{ height: height }}
+      style={{ height: echartsHeight }}
     >
       <div ref={chartRef} id={elementId} className={styles.canvas}></div>
       {isEmptyOpt && (

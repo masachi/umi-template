@@ -86,6 +86,8 @@ const DragContainer = ({ data }: Props) => {
           currentSelectComponent,
         );
       }
+    } else {
+      Emitter.emit(EventConstant.DROPPABLE_CONTAINER_ITEM_CLICK, undefined);
     }
 
     setCurrentSelectedId(selectedId);
@@ -170,6 +172,9 @@ const DragContainer = ({ data }: Props) => {
                     setLayoutDragging(false);
                   }, 100);
                 }}
+                onResizeStop={() => {
+                  Emitter.emit(EventConstant.GRID_LAYOUT_RESIZE_STOP);
+                }}
                 onLayoutChange={(layout, layouts) => {
                   console.info('layout change', layout);
 
@@ -209,22 +214,29 @@ const DragContainer = ({ data }: Props) => {
                           {deleteAction}
                         </div>
                       )}
-                      <Card
-                        className={'card-container'}
-                        title={item.data.cardTitle}
+                      <div
+                        className={`item-container${
+                          item?.data?.card?.enable ? '' : '-no-card'
+                        }`}
                       >
-                        <div
-                          className={'body-container'}
-                          onClick={(event) => {
-                            handleFocus(event, item.i);
-                          }}
+                        <Card
+                          className={'card-container'}
+                          title={item.data?.card?.title}
                         >
-                          <CurrentComponent
-                            style={componentStyle}
-                            {...item?.data?.props}
-                          />
-                        </div>
-                      </Card>
+                          <div
+                            id={'card-body-container'}
+                            className={'body-container'}
+                            onClick={(event) => {
+                              handleFocus(event, item.i);
+                            }}
+                          >
+                            <CurrentComponent
+                              style={componentStyle}
+                              {...item?.data?.props}
+                            />
+                          </div>
+                        </Card>
+                      </div>
                     </div>
                   );
                 })}

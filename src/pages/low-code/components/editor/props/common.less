@@ -1,0 +1,45 @@
+@import '/src/varible.less';
+
+.panel-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d9d9d9;
+
+  .header {
+    height: 32px;
+    background: rgba(31, 56, 88, 0.06);
+    display: flex;
+    color: @edit-container-font-color;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0px 12px;
+  }
+
+  .children-container {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    padding: 0px 16px;
+  }
+
+  .item-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 30px;
+    margin: 10px 0px;
+
+    .label {
+      color: @edit-container-font-color;
+      font-size: @edit-container-font-size;
+      width: 70px;
+      min-width: 70px;
+    }
+  }
+
+  .input {
+    display: flex;
+    flex: 1;
+    margin: 10px;
+  }
+}

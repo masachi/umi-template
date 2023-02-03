@@ -1,11 +1,14 @@
 export interface FieldItem {
   type: any;
   name: string;
-  cardTitle?: string;
+  card?: {
+    title: string;
+    enable: true;
+  };
 
   props?: any;
   // editor?: any[];
-  editor?: any;
+  editor?: FieldEditorItem[];
 
   module?: string;
 
@@ -20,4 +23,9 @@ export interface FieldItem {
     maxH?: number;
     maxW?: number;
   };
+}
+
+export interface FieldEditorItem {
+  tabTitle: string;
+  component: string;
 }

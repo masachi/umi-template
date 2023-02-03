@@ -32,27 +32,67 @@
     position: absolute !important;
   }
 
-  .card-container {
+  .item-container {
     display: flex;
     flex-direction: column;
     width: 100%;
 
-    .ant-card-head {
-      cursor: grab;
-    }
-
-    .ant-card-body {
+    .card-container {
       display: flex;
-      flex: 1;
-      padding: 0px !important;
-      overflow: auto;
-    }
-
-    .body-container {
-      padding: 12px;
-      height: 100%;
+      flex-direction: column;
       width: 100%;
-      cursor: pointer;
+      max-height: 100%;
+
+      .ant-card-head {
+        cursor: grab;
+      }
+
+      .ant-card-body {
+        display: flex;
+        flex: 1;
+        padding: 0px !important;
+        overflow-y: auto;
+      }
+
+      .body-container {
+        padding: 12px;
+        height: 100%;
+        width: 100%;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .item-container-no-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .card-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      flex: 1;
+      max-height: 100%;
+
+      .ant-card-head {
+        display: none !important;
+      }
+
+      .ant-card-body {
+        display: flex;
+        flex: 1;
+        padding: 0px !important;
+        overflow-y: auto;
+        border: none !important;
+      }
+
+      .body-container {
+        padding: 12px;
+        height: 100%;
+        width: 100%;
+        cursor: pointer;
+      }
     }
   }
 }

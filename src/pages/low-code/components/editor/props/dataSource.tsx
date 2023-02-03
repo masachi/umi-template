@@ -28,8 +28,14 @@ import {
 import './index.less';
 import { Emitter, EventConstant } from '@/utils/emitter';
 import jsonp from 'fetch-jsonp';
+import {
+  CardHeader,
+  UniPanel,
+  UniPanelRow,
+} from '@/pages/low-code/components/editor/props/common';
 
 interface ColumnItemProps {
+  componentKey: string;
   index: number;
   propsKey: string;
   propsItem?: any;
@@ -37,72 +43,10 @@ interface ColumnItemProps {
   valueProcessor?: (value: any) => any;
 }
 
-export const UniPanel = ({ header, children, ...restProps }: any) => {
-  return (
-    <div className={'panel-container'}>
-      {header && <div className={'header'}>{header}</div>}
-      <div className={'children-container'}>{children}</div>
-    </div>
-  );
-};
-
-export const UniPanelRow = ({ label, children }: any) => {
-  return (
-    <div className={'item-container'}>
-      <label className={'label'}>{label}</label>
-      {children}
-    </div>
-  );
-};
-
-export const CardHeader = ({ componentId, cardHeaderTitle }) => {
-  const onCardHeaderTitleChange = (id: string, key: string, value: any) => {
-    let payload = {
-      id: id,
-    };
-
-    payload['cardTitle'] = value;
-    Emitter.emit(EventConstant.RIGHT_CONTAINER_CARD_TITLE_CHANGE, payload);
-  };
-
-  return (
-    <UniPanel header="卡片">
-      <UniPanelRow label={'卡片标题'}>
-        <Input
-          className={'input'}
-          value={cardHeaderTitle}
-          onChange={(event) => {
-            onCardHeaderTitleChange(
-              componentId,
-              'cardHeaderTitle',
-              event.target.value,
-            );
-          }}
-          onPressEnter={(event) => {
-            onCardHeaderTitleChange(componentId, 'cardHeaderTitle', event);
-          }}
-          onBlur={(event) => {
-            onCardHeaderTitleChange(
-              componentId,
-              'cardHeaderTitle',
-              event.target.value,
-            );
-          }}
-        />
-      </UniPanelRow>
-    </UniPanel>
-  );
-};
-
-// common end
-
 export const TablePropsEditor = ({ componentId, selectComponentData }) => {
   return (
     <Collapse collapsible={'disabled'}>
-      <CardHeader
-        componentId={componentId}
-        cardHeaderTitle={selectComponentData?.cardTitle}
-      />
+      <CardHeader componentId={componentId} card={selectComponentData?.card} />
       <DataSource
         componentId={componentId}
         props={selectComponentData?.props}
@@ -233,8 +177,18 @@ export const Columns = ({ componentId, props, propsKey }) => {
   };
 
   const onColumnItemEditClick = (index) => {
-    setColumnEditIndex(index);
-    setColumnEditOpen(true);
+    Modal.info({
+      title: `项目${index}`,
+      mask: false,
+      maskClosable: true,
+      closable: true,
+      className: 'column-drawer-container',
+      style: {
+        height: document.getElementById('low-code-container').offsetHeight,
+      },
+      getContainer: document.getElementById('low-code-container'),
+      content: <ColumnPropsEditDrawerContent index={index} />,
+    });
   };
 
   const onColumnItemKeyEdit = (value, index, key) => {
@@ -244,9 +198,15 @@ export const Columns = ({ componentId, props, propsKey }) => {
     componentPropsChange(componentId, propsKey, columns);
   };
 
-  const ColumnItemInput = ({ index, propsKey }: ColumnItemProps) => {
+  const ColumnItemInput = ({
+    componentKey,
+    index,
+    propsKey,
+  }: ColumnItemProps) => {
     return (
       <Input
+        id={componentKey}
+        key={componentKey}
         className={'input'}
         defaultValue={columnDataSource[index][propsKey]}
         onChange={(event) => {
@@ -262,9 +222,15 @@ export const Columns = ({ componentId, props, propsKey }) => {
     );
   };
 
-  const ColumnItemInputNumber = ({ index, propsKey }: ColumnItemProps) => {
+  const ColumnItemInputNumber = ({
+    componentKey,
+    index,
+    propsKey,
+  }: ColumnItemProps) => {
     return (
       <InputNumber
+        id={componentKey}
+        key={componentKey}
         className={'input'}
         defaultValue={columnDataSource[index][propsKey]}
         min={0}
@@ -308,7 +274,7 @@ export const Columns = ({ componentId, props, propsKey }) => {
   }: ColumnItemProps) => {
     return (
       <Switch
-        checked={columnDataSource[index][propsKey]}
+        defaultChecked={columnDataSource[index][propsKey]}
         onChange={(checked) => {
           let value = checked;
           if (valueProcessor) {
@@ -321,21 +287,6 @@ export const Columns = ({ componentId, props, propsKey }) => {
   };
 
   const ColumnPropsEditDrawerContent = ({ index }) => {
-    const [columnDataItem, setColumnDataItem] = useState(undefined);
-
-    useEffect(() => {
-      Emitter.on(
-        EventConstant.RIGHT_CONTAINER_TABLE_COLUMN,
-        (columnDataItem) => {
-          setColumnDataItem(columnDataItem);
-        },
-      );
-
-      return () => {
-        Emitter.off(EventConstant.RIGHT_CONTAINER_TABLE_COLUMN);
-      };
-    }, []);
-
     const columnProps = [
       {
         label: '列标题',
@@ -387,7 +338,7 @@ export const Columns = ({ componentId, props, propsKey }) => {
           return (
             <UniPanelRow label={item.label}>
               <item.component
-                key={`column-edit-${item.key}-${index}`}
+                componentKey={`column-edit-${item.key}-${index}`}
                 index={index}
                 propsKey={item.key}
                 propsItem={item}
@@ -403,26 +354,6 @@ export const Columns = ({ componentId, props, propsKey }) => {
     <UniPanel header="表格列">
       {columnDataSource.length > 0 ? (
         <>
-          <Modal
-            title={`项目${columnEditIndex}`}
-            open={columnEditOpen}
-            onCancel={() => {
-              setColumnEditIndex(-1);
-              setColumnEditOpen(false);
-            }}
-            mask={false}
-            maskClosable={true}
-            closable={true}
-            className={'column-drawer-container'}
-            width={400}
-            style={{
-              height:
-                document.getElementById('low-code-container').offsetHeight,
-            }}
-            getContainer={document.getElementById('low-code-container')}
-          >
-            <ColumnPropsEditDrawerContent index={columnEditIndex} />
-          </Modal>
           <label className={'column-body-label'}>数据字段</label>
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable">

@@ -42,12 +42,16 @@ export default function LowCode() {
       }
     });
 
-    Emitter.on(EventConstant.RIGHT_CONTAINER_CARD_TITLE_CHANGE, (data) => {
+    Emitter.on(EventConstant.RIGHT_CONTAINER_CARD_CHANGE, (data) => {
       let changedComponent = selectedComponents.find(
         (item) => item.i === data.id,
       );
       if (changedComponent) {
-        changedComponent.data.cardTitle = data?.cardTitle;
+        changedComponent.data.card = Object.assign(
+          {},
+          changedComponent.data.card,
+          data?.card,
+        );
         setSelectedComponents(selectedComponents.slice());
       }
     });
@@ -55,7 +59,7 @@ export default function LowCode() {
     return () => {
       Emitter.off(EventConstant.DROPPABLE_CONTAINER_DELETE_CLICK);
       Emitter.off(EventConstant.RIGHT_CONTAINER_PROPS_CHANGE);
-      Emitter.off(EventConstant.RIGHT_CONTAINER_CARD_TITLE_CHANGE);
+      Emitter.off(EventConstant.RIGHT_CONTAINER_CARD_CHANGE);
     };
   }, [selectedComponents]);
 

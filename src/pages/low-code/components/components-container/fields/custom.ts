@@ -3,6 +3,9 @@ import DatePicker from '@/components/picker/datepicker';
 import { FieldItem } from '@/pages/low-code/interfaces';
 import UniTable from '@/components/table';
 import { TablePropsEditor } from '@/pages/low-code/components/editor/props/dataSource';
+import UniEcharts from '@/components/echarts';
+import { v4 as uuidv4 } from 'uuid';
+import { pieOption } from '@/pages/low-code/components/components-container/options/pie-option';
 
 const customFields: FieldItem[] = [
   {
@@ -63,7 +66,10 @@ const customFields: FieldItem[] = [
 
     type: UniTable,
     name: '表格',
-    cardTitle: '表格',
+    card: {
+      title: '表格',
+      enable: true,
+    },
     props: {
       bordered: true,
       rowKey: 'id',
@@ -78,12 +84,61 @@ const customFields: FieldItem[] = [
         hideOnSinglePage: false,
       },
     },
-    editor: 'Table',
+    editor: [
+      {
+        tabTitle: '属性',
+        component: 'Table',
+      },
+    ],
     position: {
       w: 10,
       h: 10,
       minW: 4,
       minH: 10,
+    },
+  },
+
+  /**
+   * <UniEcharts
+   *  elementId={'cmi-rw-scatter-echarts'}
+   *  loading={cmiRegionAnalysisLoading}
+   *  options={cmiRegionEchartsOptions}
+   *  mouseEvents={{
+   *    eventName: 'click',
+   *    query: 'series',
+   *    handler: (event) => {
+   *      let regionCode = event.value[2];
+   *      Emitter.emit(
+   *        [
+   *          EventConstant.CMI_SCATTER_CLICK,
+   *          EventConstant.CMI_HOSPITAL_SELECT_CLICK,
+   *        ],
+   *        regionCode === cmiSelectedRegionCode ? '' : regionCode,
+   *      );
+   *    },
+   *  }}
+   * />
+   */
+
+  {
+    type: UniEcharts,
+    name: '饼图',
+    props: {
+      elementId: uuidv4(),
+      loading: false,
+      options: pieOption,
+    },
+    editor: [
+      {
+        tabTitle: '属性',
+        component: 'Pie',
+      },
+    ],
+    position: {
+      w: 10,
+      h: 10,
+      minW: 6,
+      minH: 6,
     },
   },
 ];

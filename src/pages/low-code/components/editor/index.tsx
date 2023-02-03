@@ -4,6 +4,7 @@ import { Emitter, EventConstant } from '@/utils/emitter';
 import { rightFields } from '@/pages/low-code/components/editor/fields';
 import { TablePropsEditor } from '@/pages/low-code/components/editor/props/dataSource';
 import { propsMap } from '@/pages/low-code/components/editor/props';
+import { Tabs } from 'antd';
 
 const RightEditor = () => {
   const [selectedComponent, setSelectedComponent] = useState(undefined);
@@ -71,19 +72,29 @@ const RightEditor = () => {
     );
   };
 
-  const PropsComponent = selectedComponent
-    ? propsMap[selectedComponent.data?.editor]
-    : undefined;
-
   return (
     <div className={'editor-container'} id={'right-editor-container'}>
       <div className={'editor-content-container'}>
-        {selectedComponent && PropsComponent ? (
+        {selectedComponent ? (
           <>
-            <PropsComponent
-              componentId={selectedComponent?.i}
-              selectComponentData={selectedComponent?.data}
-            />
+            <Tabs type={'card'}>
+              {selectedComponent.data?.editor
+                ?.filter((item) => propsMap[item.component])
+                ?.map((item, index) => {
+                  const PropsComponent = selectedComponent
+                    ? propsMap[item.component]
+                    : undefined;
+
+                  return (
+                    <Tabs.TabPane tab={item.tabTitle} key={`item-${index}`}>
+                      <PropsComponent
+                        componentId={selectedComponent?.i}
+                        selectComponentData={selectedComponent?.data}
+                      />
+                    </Tabs.TabPane>
+                  );
+                })}
+            </Tabs>
           </>
         ) : (
           // <TablePropsEditor componentId={selectedComponent?.i} selectComponentData={selectedComponent?.data} />
