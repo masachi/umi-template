@@ -1,8 +1,11 @@
+import { defaultColors } from '@/pages/low-code/constants';
+
 export const pieOption = {
   title: {
     show: false,
     text: '',
   },
+  color: defaultColors,
   tooltip: {
     trigger: 'item',
   },

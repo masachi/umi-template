@@ -25,11 +25,12 @@ import {
   DroppableProvided,
 } from 'react-beautiful-dnd';
 
-import './index.less';
+import './styles/index.less';
 import { Emitter, EventConstant } from '@/utils/emitter';
 import jsonp from 'fetch-jsonp';
 import {
   CardHeader,
+  componentPropsChange,
   UniPanel,
   UniPanelRow,
 } from '@/pages/low-code/components/editor/props/common';
@@ -116,21 +117,8 @@ export const DataSource = ({ componentId, props }) => {
   );
 };
 
-const componentPropsChange = (id: string, key: string, value: any) => {
-  let payload = {
-    id: id,
-    props: {},
-  };
-
-  payload.props[key] = value;
-  Emitter.emit(EventConstant.RIGHT_CONTAINER_PROPS_CHANGE, payload);
-};
-
 export const Columns = ({ componentId, props, propsKey }) => {
   const columnDataSource = props[propsKey] || [];
-
-  const [columnEditOpen, setColumnEditOpen] = useState(false);
-  const [columnEditIndex, setColumnEditIndex] = useState(-1);
 
   const onColumnAddClick = () => {
     let columns = columnDataSource.slice();

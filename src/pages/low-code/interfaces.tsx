@@ -3,7 +3,7 @@ export interface FieldItem {
   name: string;
   card?: {
     title: string;
-    enable: true;
+    enable: boolean;
   };
 
   props?: any;

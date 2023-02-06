@@ -6,6 +6,7 @@ import { TablePropsEditor } from '@/pages/low-code/components/editor/props/dataS
 import UniEcharts from '@/components/echarts';
 import { v4 as uuidv4 } from 'uuid';
 import { pieOption } from '@/pages/low-code/components/components-container/options/pie-option';
+import { defaultColors } from '@/pages/low-code/constants';
 
 const customFields: FieldItem[] = [
   {
@@ -128,10 +129,14 @@ const customFields: FieldItem[] = [
       loading: false,
       options: pieOption,
     },
+    card: {
+      title: '饼图',
+      enable: false,
+    },
     editor: [
       {
         tabTitle: '属性',
-        component: 'Pie',
+        component: 'EchartsPie',
       },
     ],
     position: {
